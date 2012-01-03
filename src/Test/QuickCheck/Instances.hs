@@ -2,6 +2,7 @@
 
 {-| 
   Instances for the types in the packages:
+   * array
    * bytestring
    * text
    * containers
