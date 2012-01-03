@@ -23,6 +23,7 @@ Library
   Hs-Source-Dirs:      src  
   Build-depends:       base < 5,
 
+                       array == 0.4.*,
                        bytestring == 0.9.*,
                        containers == 0.4.*,
                        old-time == 1.1.*,
