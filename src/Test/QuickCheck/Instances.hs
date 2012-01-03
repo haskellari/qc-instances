@@ -2,11 +2,17 @@
 
 {-| 
   Instances for the types in the packages:
+
    * array
+
    * bytestring
+
    * text
+
    * containers
+
    * old-time
+
    * time
 -}
 module Test.QuickCheck.Instances () where
