@@ -1,4 +1,3 @@
-
 # Inclusion
 
 This class provides instances for the classes which ship with the QuickCheck package.
@@ -19,3 +18,5 @@ The removal of an instance will always result in incrementing the major version 
 
 Backwards compatibilty will be maintained, when desired, using the `MIN_VERSION` Cpp macros
 provided by Cabal.
+
+We intend that this package builds on Debian stable.
