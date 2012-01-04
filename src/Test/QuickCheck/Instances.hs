@@ -128,7 +128,9 @@ instance Arbitrary OldTime.ClockTime where
 
 instance Arbitrary OldTime.TimeDiff where
     -- a bit of a cheat ...
-    arbitrary = OldTime.diffClockTimes <$> arbitrary <*> arbitrary
+    arbitrary =
+        OldTime.normalizeTimeDiff <$>
+           (OldTime.diffClockTimes <$> arbitrary <*> arbitrary)
 
 -- UTC only
 instance Arbitrary OldTime.CalendarTime where
@@ -158,9 +160,9 @@ instance Arbitrary Time.NominalDiffTime where
 instance Arbitrary Time.TimeZone where
     arbitrary =
         Time.TimeZone
-         <$> choose (-12*60*60,12*60*60)
-         <*> arbitrary
-         <*> (fmap toUpper <$> resize 4 arbitrary)
+         <$> choose (-12*60*60,12*60*60) -- utc offset (s)
+         <*> arbitrary -- is summer time
+         <*> (sequence . replicate 4 $ choose ('A','Z'))
 
 instance Arbitrary Time.TimeOfDay where
     arbitrary =
