@@ -1,21 +1,35 @@
 Name:                quickcheck-instances
-Version:             0.1
+Version:             0.1.0
 Synopsis:            Common quickcheck instances
 Description:         QuickCheck instances.
                      .
                      The goal is to supply QuickCheck instances for
                      types provided by the Haskell Platform.
+                     .
+                     Since all of these instances are provided as
+                     orphans, I recommend that you do not use this library
+                     within another library module, so that you don't
+                     impose these instances on down-stream consumers of
+                     your code.
+                     .
+                     For information on writing a test-suite with Cabal
+                     see <http://www.haskell.org/cabal/users-guide/#test-suites>
 
 License:             BSD3
 License-file:        LICENSE
 Author:              Antoine Latter
 Maintainer:          aslatter@gmail.com
+Homepage:            https://github.com/aslatter/qc-instances
+Bug-reports:         https://github.com/aslatter/qc-instances/issues
 Copyright:           Copyright Antoine Latter, 2012
 Category:            Testing
 Build-type:          Simple
 -- Extra-source-files:  
 Cabal-version:       >=1.6
 
+Source-repository head
+  type:     git
+  location: https://github.com/aslatter/qc-instances.git
 
 Library
   -- Modules exported by the library.

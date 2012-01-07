@@ -1,19 +1,27 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-| 
-  Instances for the types in the packages:
+Instances are provided for the types in the packages:
 
-   * array
+ * array - We only provide instances for arrays inexed by
+   Integral types.
 
-   * bytestring
+ * bytestring
 
-   * text
+ * text
 
-   * containers
+ * containers
 
-   * old-time
+ * old-time
 
-   * time
+ * time
+
+Since all of these instances are provided as orphans, I recommend that
+you do not use this library within another library module, so that you
+don't impose these instances on down-stream consumers of your code.
+
+For information on writing a test-suite with Cabal see
+<http://www.haskell.org/cabal/users-guide/#test-suites>
 -}
 module Test.QuickCheck.Instances () where
 
