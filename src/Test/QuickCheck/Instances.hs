@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-| 
   Instances for the types in the packages:
 
@@ -18,7 +18,6 @@
 module Test.QuickCheck.Instances () where
 
 import Control.Applicative
-import Data.Char (toUpper)
 import Data.Foldable (toList)
 import Data.Int (Int32)
 import Test.QuickCheck
@@ -80,7 +79,7 @@ instance Arbitrary TL.Text where
 
 instance Arbitrary a => Arbitrary (IntMap.IntMap a) where
     arbitrary = IntMap.fromList <$> arbitrary
-    shrink map = IntMap.fromList <$> shrink (IntMap.toList map)
+    shrink m = IntMap.fromList <$> shrink (IntMap.toList m)
 
 instance Arbitrary IntSet.IntSet where
     arbitrary = IntSet.fromList <$> arbitrary
@@ -88,11 +87,11 @@ instance Arbitrary IntSet.IntSet where
 
 instance (Ord k, Arbitrary k, Arbitrary v) => Arbitrary (Map.Map k v) where
     arbitrary = Map.fromList <$> arbitrary
-    shrink map = Map.fromList <$> shrink (Map.toList map)
+    shrink m = Map.fromList <$> shrink (Map.toList m)
 
 instance Arbitrary a => Arbitrary (Seq.Seq a) where
     arbitrary = Seq.fromList <$> arbitrary
-    shrink seq = Seq.fromList <$> shrink (toList seq)
+    shrink xs = Seq.fromList <$> shrink (toList xs)
 
 instance (Ord a, Arbitrary a) => Arbitrary (Set.Set a) where
     arbitrary = Set.fromList <$> arbitrary

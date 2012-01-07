@@ -30,7 +30,8 @@ Library
                        QuickCheck >= 2.1 && < 2.5,
                        text >= 0.7 && < 0.12,
                        time >= 1.1 && < 1.5
-  
+
+  Ghc-options:         -Wall
   -- Other-modules:       
   -- Build-tools:         
   
