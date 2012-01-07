@@ -21,13 +21,12 @@ import Control.Applicative
 import Data.Char (toUpper)
 import Data.Foldable (toList)
 import Data.Int (Int32)
-import Data.String (IsString, fromString)
 import Test.QuickCheck
 
 import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
-import qualified Data.ByteString.Char8 as BS
-import qualified Data.ByteString.Lazy.Char8 as BL
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BL
 import qualified Data.Fixed as Fixed
 import qualified Data.IntMap as IntMap
 import qualified Data.IntSet as IntSet
@@ -61,21 +60,21 @@ arbitraryArray = do
 
 -- ByteString
 instance Arbitrary BS.ByteString where
-    arbitrary = stringArbitrary
-    shrink = stringShrink BS.unpack
+    arbitrary = BS.pack <$> arbitrary
+    shrink xs = BS.pack <$> shrink (BS.unpack xs)
 
 instance Arbitrary BL.ByteString where
-    arbitrary = stringArbitrary
-    shrink = stringShrink BL.unpack
+    arbitrary = BL.pack <$> arbitrary
+    shrink xs = BL.pack <$> shrink (BL.unpack xs)
 
 -- Text
 instance Arbitrary TS.Text where
-    arbitrary = stringArbitrary
-    shrink = stringShrink TS.unpack
+    arbitrary = TS.pack <$> arbitrary
+    shrink xs = TS.pack <$> shrink (TS.unpack xs)
 
 instance Arbitrary TL.Text where
-    arbitrary = stringArbitrary
-    shrink = stringShrink TL.unpack
+    arbitrary = TL.pack <$> arbitrary
+    shrink xs = TL.pack <$> shrink (TL.unpack xs)
 
 -- Containers
 
@@ -209,11 +208,3 @@ arbitraryBoundedEnum =
          mx = maxBound `asTypeOf` mn
      n <- choose (fromEnum mn, fromEnum mx)
      return (toEnum n `asTypeOf` mn)
-
--- helper functions
-
-stringArbitrary :: IsString a => Gen a
-stringArbitrary = fromString <$> arbitrary
-
-stringShrink :: IsString a => (a -> String) -> a -> [a]
-stringShrink toString x = fromString <$> shrink (toString x)
