@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-| 
@@ -49,21 +50,31 @@ import qualified System.Time as OldTime
 
 -- Array
 
-instance (Array.Ix i, Integral i, Arbitrary e) => Arbitrary (Array.Array i e) where
+instance (Array.Ix i, Arbitrary i, Arbitrary e) => Arbitrary (Array.Array i e) where
     arbitrary = arbitraryArray
+    shrink    = shrinkArray
 
-instance (Array.IArray Array.UArray e, Array.Ix i, Integral i, Arbitrary e)
+instance (Array.IArray Array.UArray e, Array.Ix i, Arbitrary i, Arbitrary e)
         => Arbitrary (Array.UArray i e) where
     arbitrary = arbitraryArray
+    shrink    = shrinkArray
 
-arbitraryArray :: (Array.IArray a e, Array.Ix i, Integral i, Arbitrary e) => Gen (a i e)
+arbitraryArray :: (Array.IArray a e, Array.Ix i, Arbitrary i, Arbitrary e) => Gen (a i e)
 arbitraryArray = do
-      b1 <- arbitrarySizedIntegral
-      b2 <- arbitrarySizedIntegral
+      b1 <- arbitrary
+      b2 <- arbitrary
       let bounds =
               if b1 < b2 then (b1,b2) else (b2,b1)
       elms <- vector (Array.rangeSize bounds)
       return $ Array.listArray bounds elms
+
+shrinkArray :: (Array.IArray a e, Array.Ix i, Arbitrary i, Arbitrary e) => a i e -> [a i e]
+shrinkArray a =
+    -- Shrink each elements but don't change the size of array.
+    let bounds = Array.bounds a
+        elmss  = shrink <$> Array.elems a
+    in Array.listArray bounds <$> elmss
+
 
 -- ByteString
 instance Arbitrary BS.ByteString where
@@ -131,12 +142,23 @@ instance Arbitrary OldTime.ClockTime where
     arbitrary =
         OldTime.TOD <$> choose (0, fromIntegral (maxBound :: Int32))
                     <*> choose (0, 1000000000000 - 1)
+    shrink (OldTime.TOD s p) =
+        [ OldTime.TOD s' p  | s' <- shrink s ] ++
+        [ OldTime.TOD s  p' | p' <- shrink p ]
 
 instance Arbitrary OldTime.TimeDiff where
     -- a bit of a cheat ...
     arbitrary =
         OldTime.normalizeTimeDiff <$>
            (OldTime.diffClockTimes <$> arbitrary <*> arbitrary)
+    shrink td =
+        [ td { OldTime.tdYear    = y' } | y' <- shrink (OldTime.tdYear    td) ] ++
+        [ td { OldTime.tdMonth   = m' } | m' <- shrink (OldTime.tdMonth   td) ] ++
+        [ td { OldTime.tdDay     = d' } | d' <- shrink (OldTime.tdDay     td) ] ++
+        [ td { OldTime.tdHour    = h' } | h' <- shrink (OldTime.tdHour    td) ] ++
+        [ td { OldTime.tdMin     = m' } | m' <- shrink (OldTime.tdMin     td) ] ++
+        [ td { OldTime.tdSec     = s' } | s' <- shrink (OldTime.tdSec     td) ] ++
+        [ td { OldTime.tdPicosec = p' } | p' <- shrink (OldTime.tdPicosec td) ]
 
 -- UTC only
 instance Arbitrary OldTime.CalendarTime where
@@ -145,23 +167,33 @@ instance Arbitrary OldTime.CalendarTime where
 -- time
 
 instance Arbitrary Time.Day where
-    arbitrary =
-        Time.ModifiedJulianDay
-            <$> choose (gregToNum 1200 1 1, gregToNum 2999 1 1)
+    arbitrary = Time.ModifiedJulianDay <$> (2000 +) <$> arbitrary
+    shrink    = (Time.ModifiedJulianDay <$>) . shrink . Time.toModifiedJulianDay
 
 instance Arbitrary Time.UniversalTime where
-    arbitrary =
-        Time.ModJulianDate
-            <$> toRational `fmap` choose (gregToNum 1200 1 1 :: Double, gregToNum 2999 1 1)
+    arbitrary = Time.ModJulianDate <$> (2000 +) <$> arbitrary
+    shrink    = (Time.ModJulianDate <$>) . shrink . Time.getModJulianDate
 
 instance Arbitrary Time.DiffTime where
     arbitrary = arbitrarySizedFractional
+#if MIN_VERSION_time(1,3,0)
+    shrink    = shrinkRealFrac
+#else
+    shrink    = (fromRational <$>) . shrink . toRational
+#endif
 
 instance Arbitrary Time.UTCTime where
-    arbitrary = Time.UTCTime <$> arbitrary <*> (fromRational . toRational <$> choose (0::Double, 86400))
+    arbitrary =
+        Time.UTCTime
+        <$> arbitrary
+        <*> (fromRational . toRational <$> choose (0::Double, 86400))
+    shrink ut =
+        [ ut { Time.utctDay     = d'  } | d'  <- shrink (Time.utctDay     ut) ] ++
+        [ ut { Time.utctDayTime = dt' } | dt' <- shrink (Time.utctDayTime ut) ]
 
 instance Arbitrary Time.NominalDiffTime where
     arbitrary = arbitrarySizedFractional
+    shrink    = shrinkRealFrac
 
 instance Arbitrary Time.TimeZone where
     arbitrary =
@@ -169,6 +201,10 @@ instance Arbitrary Time.TimeZone where
          <$> choose (-12*60*60,12*60*60) -- utc offset (s)
          <*> arbitrary -- is summer time
          <*> (sequence . replicate 4 $ choose ('A','Z'))
+    shrink tz =
+        [ tz { Time.timeZoneMinutes    = m' } | m' <- shrink (Time.timeZoneMinutes    tz) ] ++
+        [ tz { Time.timeZoneSummerOnly = s' } | s' <- shrink (Time.timeZoneSummerOnly tz) ] ++
+        [ tz { Time.timeZoneName       = n' } | n' <- shrink (Time.timeZoneName       tz) ]
 
 instance Arbitrary Time.TimeOfDay where
     arbitrary =
@@ -176,30 +212,36 @@ instance Arbitrary Time.TimeOfDay where
          <$> choose (0, 23) -- hour
          <*> choose (0, 59) -- minute
          <*> (fromRational . toRational <$> choose (0::Double, 60)) -- picoseconds, via double
+    shrink tod =
+        [ tod { Time.todHour = h' } | h' <- shrink (Time.todHour tod) ] ++
+        [ tod { Time.todMin  = m' } | m' <- shrink (Time.todMin  tod) ] ++
+        [ tod { Time.todSec  = s' } | s' <- shrink (Time.todSec  tod) ]
 
 instance Arbitrary Time.LocalTime where
     arbitrary =
         Time.LocalTime
          <$> arbitrary
          <*> arbitrary
+    shrink lt =
+        [ lt { Time.localDay       = d' } | d' <- shrink (Time.localDay       lt) ] ++
+        [ lt { Time.localTimeOfDay = t' } | t' <- shrink (Time.localTimeOfDay lt) ]
 
 instance Arbitrary Time.ZonedTime where
     arbitrary =
         Time.ZonedTime
          <$> arbitrary
          <*> arbitrary
+    shrink zt =
+        [ zt { Time.zonedTimeToLocalTime = l' } | l' <- shrink (Time.zonedTimeToLocalTime zt) ] ++
+        [ zt { Time.zonedTimeZone        = z' } | z' <- shrink (Time.zonedTimeZone        zt) ]
 
 instance Arbitrary Time.AbsoluteTime where
     arbitrary =
         Time.addAbsoluteTime
          <$> arbitrary
          <*> return Time.taiEpoch
-
--- | Given a year, month, and day return a number suitable for
--- use as a Day or UniversalTime
-gregToNum :: Num a => Integer -> Int -> Int -> a
-gregToNum year month day =
-    fromInteger . Time.toModifiedJulianDay $ Time.fromGregorian year month day
+    shrink at =
+        (`Time.addAbsoluteTime` at) <$> shrink (Time.diffAbsoluteTime at Time.taiEpoch)
 
 -- WARNING: from base, should be moved to QC library
 instance Arbitrary Ordering where
@@ -207,6 +249,7 @@ instance Arbitrary Ordering where
 
 instance Fixed.HasResolution a => Arbitrary (Fixed.Fixed a) where
     arbitrary = arbitrarySizedFractional
+    shrink    = shrinkRealFrac
 
 -- WARNING: should be moved to QC library
 arbitraryBoundedEnum :: (Bounded a, Enum a) => Gen a
