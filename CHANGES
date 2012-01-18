@@ -1,0 +1,15 @@
+0.2.0
+
+Author: Antoine Latter <aslatter@gmail.com>
+
+*   Add support for older versions of QuickCheck.
+
+Author: PHO <pho@cielonegro.org>
+
+*   Provide 'CoArbitrary' instances for types.
+
+*   Provide 'shrink' for more instances of 'Arbitrary'.
+
+0.1.0
+
+* Initial release

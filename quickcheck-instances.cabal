@@ -24,7 +24,7 @@ Bug-reports:         https://github.com/aslatter/qc-instances/issues
 Copyright:           Copyright Antoine Latter, 2012
 Category:            Testing
 Build-type:          Simple
--- Extra-source-files:  
+Extra-source-files:  CHANGES
 Cabal-version:       >=1.6
 
 Source-repository head
