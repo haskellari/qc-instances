@@ -47,6 +47,8 @@ import qualified Data.Time.Clock.TAI as Time
 import qualified Data.Tree as Tree
 import qualified System.Time as OldTime
 
+import Test.QuickCheck.Instances.LegacyNumeric()
+
 -- Array
 
 instance (Array.Ix i, Arbitrary i, Arbitrary e) => Arbitrary (Array.Array i e) where

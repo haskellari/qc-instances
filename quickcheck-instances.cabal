@@ -46,6 +46,6 @@ Library
                        time >= 1.1 && < 1.5
 
   Ghc-options:         -Wall
-  -- Other-modules:       
+  Other-modules:       Test.QuickCheck.Instances.LegacyNumeric
   -- Build-tools:         
   
