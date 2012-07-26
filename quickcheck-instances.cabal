@@ -1,5 +1,5 @@
 Name:                quickcheck-instances
-Version:             0.2.0
+Version:             0.3.0
 Synopsis:            Common quickcheck instances
 Description:         QuickCheck instances.
                      .
@@ -39,9 +39,9 @@ Library
 
                        array >= 0.3 && < 0.5,
                        bytestring == 0.9.*,
-                       containers >= 0.3 && < 0.5,
+                       containers >= 0.3 && < 0.6,
                        old-time >= 1.0 && < 1.2,
-                       QuickCheck >= 2.1 && < 2.5,
+                       QuickCheck >= 2.1 && < 2.6,
                        text >= 0.7 && < 0.12,
                        time >= 1.1 && < 1.5
 

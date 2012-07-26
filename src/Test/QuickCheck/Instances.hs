@@ -34,7 +34,7 @@ import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
-import qualified Data.Fixed as Fixed
+import qualified Data.Fixed as Fixed -- required for QC < 2.5.0
 import qualified Data.IntMap as IntMap
 import qualified Data.IntSet as IntSet
 import qualified Data.Map as Map
@@ -354,12 +354,18 @@ instance Arbitrary Time.AbsoluteTime where
 instance CoArbitrary Time.AbsoluteTime where
     coarbitrary = coarbitrary . flip Time.diffAbsoluteTime Time.taiEpoch
 
--- WARNING: from base, should be moved to QC library
+-- Introduced in QC 2.5.0
+#if !(MIN_VERSION_QuickCheck(2,5,0))
 instance Arbitrary Ordering where
     arbitrary = arbitraryBoundedEnum
+    shrink GT = [EQ, LT]
+    shrink LT = [EQ]
+    shrink EQ = []
 
 instance CoArbitrary Ordering where
-    coarbitrary = coarbitraryEnum
+    coarbitrary GT = variant 1
+    coarbitrary EQ = variant 0
+    coarbitrary LT = variant (-1)
 
 instance Fixed.HasResolution a => Arbitrary (Fixed.Fixed a) where
     arbitrary = arbitrarySizedFractional
@@ -368,7 +374,6 @@ instance Fixed.HasResolution a => Arbitrary (Fixed.Fixed a) where
 instance Fixed.HasResolution a => CoArbitrary (Fixed.Fixed a) where
     coarbitrary = coarbitraryReal
 
--- WARNING: should be moved to QC library
 arbitraryBoundedEnum :: (Bounded a, Enum a) => Gen a
 arbitraryBoundedEnum =
   do let mn = minBound
@@ -378,3 +383,4 @@ arbitraryBoundedEnum =
 
 coarbitraryEnum :: Enum a => a -> Gen c -> Gen c
 coarbitraryEnum = variant . fromEnum
+#endif
