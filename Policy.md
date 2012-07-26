@@ -1,8 +1,8 @@
 # Inclusion
 
-This class provides instances for the classes which ship with the QuickCheck package.
+This package provides instances for the classes which ship with the QuickCheck package.
 
-A type instance may be included if the type is in a library which is a part
+A type instance may be included if the type is in a package which is a part
 of the Haskell Platform.
 
 Other types may be included at the maintainer's discreation.
