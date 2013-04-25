@@ -1,3 +1,9 @@
+0.3.2
+
+Author: Antoine Latter <aslatter@gmail.com>
+
+* Allow building against newer QuickCheck
+
 0.3.1
 
 Author: Antoine Latter <aslatter@gmail.com>
