@@ -41,7 +41,7 @@ Library
                        bytestring >= 0.9 && < 0.11,
                        containers >= 0.3 && < 0.6,
                        old-time >= 1.0 && < 1.2,
-                       QuickCheck >= 2.1 && < 2.6,
+                       QuickCheck >= 2.1 && < 2.7,
                        text >= 0.7 && < 0.12,
                        time >= 1.1 && < 1.5
 
