@@ -290,7 +290,7 @@ instance CoArbitrary Time.NominalDiffTime where
 instance Arbitrary Time.TimeZone where
     arbitrary =
         Time.TimeZone
-         <$> choose (-12*60*60,12*60*60) -- utc offset (s)
+         <$> choose (-12*60,14*60) -- utc offset (m)
          <*> arbitrary -- is summer time
          <*> (sequence . replicate 4 $ choose ('A','Z'))
     shrink tz@(Time.TimeZone minutes summerOnly name) =
