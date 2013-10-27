@@ -1,3 +1,9 @@
+0.3.3
+
+Author: Kyle Raftogianis <kylerafto@gmail.com>
+
+* Generate UTC time offsets from -12:00 to +14:00
+
 0.3.2
 
 Author: Antoine Latter <aslatter@gmail.com>
