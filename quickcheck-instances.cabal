@@ -1,5 +1,5 @@
 Name:                quickcheck-instances
-Version:             0.3.3
+Version:             0.3.4
 Synopsis:            Common quickcheck instances
 Description:         QuickCheck instances.
                      .
@@ -37,12 +37,12 @@ Library
   Hs-Source-Dirs:      src  
   Build-depends:       base < 5,
 
-                       array >= 0.3 && < 0.5,
+                       array >= 0.3 && < 0.6,
                        bytestring >= 0.9 && < 0.11,
                        containers >= 0.3 && < 0.6,
                        old-time >= 1.0 && < 1.2,
                        QuickCheck >= 2.1 && < 2.7,
-                       text >= 0.7 && < 0.12,
+                       text >= 0.7 && < 1.1,
                        time >= 1.1 && < 1.5
 
   Ghc-options:         -Wall
