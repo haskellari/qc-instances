@@ -1,3 +1,16 @@
+0.3.5
+
+Author: Antoine Latter <aslatter@gmail.com>
+
+* No change - bumping version to re-upload to hackage, due to bugs in
+the 0.3.4 tarball.
+
+0.3.4
+
+Author: Antoine Latter <aslatter@gmail.com>
+
+* Allow newer versions of "text" and "array" as dependencies.
+
 0.3.3
 
 Author: Kyle Raftogianis <kylerafto@gmail.com>
