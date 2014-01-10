@@ -28,6 +28,7 @@ module Test.QuickCheck.Instances () where
 import Control.Applicative
 import Data.Foldable (toList)
 import Data.Int (Int32)
+import Data.Hashable
 import Test.QuickCheck
 
 import qualified Data.Array.IArray as Array
@@ -40,6 +41,8 @@ import qualified Data.IntSet as IntSet
 import qualified Data.Map as Map
 import qualified Data.Sequence as Seq
 import qualified Data.Set as Set
+import qualified Data.HashSet as HS
+import qualified Data.HashMap.Lazy as HML
 import qualified Data.Text as TS
 import qualified Data.Text.Lazy as TL
 import qualified Data.Time as Time
@@ -153,6 +156,19 @@ instance (Ord a, Arbitrary a) => Arbitrary (Set.Set a) where
 instance CoArbitrary a => CoArbitrary (Set.Set a) where
     coarbitrary = coarbitrary . Set.toList
 
+instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
+    arbitrary = HS.fromList <$> arbitrary
+    shrink hashset = HS.fromList <$> shrink (HS.toList hashset)
+
+instance CoArbitrary a => CoArbitrary (HS.HashSet a) where
+    coarbitrary = coarbitrary . HS.toList
+
+instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (HML.HashMap k v) where
+    arbitrary = HML.fromList <$> arbitrary
+    shrink m = HML.fromList <$> shrink (HML.toList m)
+
+instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
+    coarbitrary = coarbitrary . HML.toList
 instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n ->
       do val <- arbitrary
