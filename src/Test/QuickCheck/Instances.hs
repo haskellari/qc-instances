@@ -8,13 +8,15 @@ Instances are provided for the types in the packages:
 
  * bytestring
 
- * text
-
  * containers
 
  * old-time
 
+ * text
+
  * time
+
+ * unordered-containers
 
 Since all of these instances are provided as orphans, I recommend that
 you do not use this library within another library module, so that you
