@@ -169,6 +169,7 @@ instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (HML.HashMap 
 
 instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
     coarbitrary = coarbitrary . HML.toList
+
 instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n ->
       do val <- arbitrary
