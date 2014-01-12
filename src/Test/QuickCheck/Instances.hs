@@ -382,9 +382,9 @@ instance Arbitrary Ordering where
     shrink EQ = []
 
 instance CoArbitrary Ordering where
-    coarbitrary GT = variant 1
-    coarbitrary EQ = variant 0
-    coarbitrary LT = variant (-1)
+    coarbitrary GT = variant (1 :: Integer)
+    coarbitrary EQ = variant (0 :: Integer)
+    coarbitrary LT = variant (-1 :: Integer)
 
 instance Fixed.HasResolution a => Arbitrary (Fixed.Fixed a) where
     arbitrary = arbitrarySizedFractional
