@@ -44,7 +44,7 @@ Library
                        unordered-containers >= 0.2.1 && < 0.3,
                        old-time >= 1.0 && < 1.2,
                        QuickCheck >= 2.1 && < 2.7,
-                       text >= 0.7 && < 1.1,
+                       text >= 0.7 && < 1.2,
                        time >= 1.1 && < 1.5
 
   Ghc-options:         -Wall
