@@ -1,6 +1,9 @@
+0.3.7
+
 Author: Antoine Latter <aslatter@gmail.com>
 
 * Update list of covered libraries.
+* Allow newer version of "text" as a dependency.
 
 0.3.6
 
