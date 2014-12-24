@@ -45,7 +45,7 @@ Library
                        old-time >= 1.0 && < 1.2,
                        QuickCheck >= 2.1 && < 2.8,
                        text >= 0.7 && < 1.3,
-                       time >= 1.1 && < 1.5
+                       time >= 1.1 && < 1.6
 
   Ghc-options:         -Wall
   Other-modules:       Test.QuickCheck.Instances.LegacyNumeric
