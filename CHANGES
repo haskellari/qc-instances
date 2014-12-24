@@ -1,3 +1,9 @@
+0.3.10
+
+Author: Antoine Latter <aslatter@gmail.com>
+
+* Allow building against newer versions of the time package.
+
 0.3.9
 
 Author: RyanGlScott <ryan.gl.scott@ku.edu>
