@@ -1,0 +1,30 @@
+language: haskell
+
+# We don't have any actual tests.
+# However building this across different
+# package versions is hard, so that's really
+# what we're interested in.
+
+# We've set up GHC 7.4 to look similar to
+# debain wheezy and GHC 7.6 to look similar
+# to debian jessie.
+
+# Long-term I should probably switch over
+# to release of the Haskell Platform to test
+# against - the debain-based approach skips
+# QuickCheck version 2.6.
+
+matrix:
+  include:
+    - ghc: 7.4
+      env: GHC_VER=7_4
+
+    - ghc: 7.6
+      env: GHC_VER=7_6
+
+install:
+ - cp cabal.config.${GHC_VER} cabal.config && cabal install --dependencies-only
+
+# We don't need sudo
+sudo: false
+
