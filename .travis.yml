@@ -16,14 +16,28 @@ language: haskell
 
 matrix:
   include:
-    - ghc: 7.4
-      env: GHC_VER=7_4
+    - ghc: 7.4.1
+      env: CONFIG=platform/2012.2.0.0
+
+    - ghc: 7.4.2
+      env: CONFIG=platform/2012.4.0.0
 
     - ghc: 7.6
-      env: GHC_VER=7_6
+      env: CONFIG=platform/2013.2.0.0
+
+    - ghc: 7.8.3
+      env: CONFIG=platform/2014.2.0.0
+
+    - ghc: 7.4
+      env: CONFIG=debian/wheezy
+
+    - ghc: 7.8
 
 install:
- - cp cabal.config.${GHC_VER} cabal.config && cabal install --dependencies-only
+ - if ! [[ -z "$CONFIG" ]]; then
+     curl "https://raw.githubusercontent.com/aslatter/haskell-constraints/master/$CONFIG/cabal.config" > cabal.config;
+   fi
+ - cabal install --dependencies-only
 
 # We don't need sudo
 sudo: false
