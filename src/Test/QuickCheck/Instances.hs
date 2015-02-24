@@ -28,10 +28,13 @@ For information on writing a test-suite with Cabal see
 module Test.QuickCheck.Instances () where
 
 import Control.Applicative
+import Control.Arrow
 import Data.Foldable (toList)
 import Data.Int (Int32)
 import Data.Hashable
+import Data.Ratio
 import Test.QuickCheck
+import Test.QuickCheck.Function
 
 import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
@@ -122,6 +125,12 @@ instance CoArbitrary TS.Text where
 instance CoArbitrary TL.Text where
     coarbitrary = coarbitrary . TL.unpack
 
+instance Function TS.Text where
+    function = functionMap TS.unpack TS.pack
+
+instance Function TL.Text where
+    function = functionMap TL.unpack TL.pack
+
 -- Containers
 instance Arbitrary a => Arbitrary (IntMap.IntMap a) where
     arbitrary = IntMap.fromList <$> arbitrary
@@ -157,6 +166,9 @@ instance (Ord a, Arbitrary a) => Arbitrary (Set.Set a) where
 
 instance CoArbitrary a => CoArbitrary (Set.Set a) where
     coarbitrary = coarbitrary . Set.toList
+
+instance (Ord a, Function a) => Function (Set.Set a) where
+    function = functionMap Set.toList Set.fromList
 
 instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
     arbitrary = HS.fromList <$> arbitrary
@@ -268,6 +280,9 @@ instance Arbitrary Time.Day where
 instance CoArbitrary Time.Day where
     coarbitrary = coarbitrary . Time.toModifiedJulianDay
 
+instance Function Time.Day where
+    function = functionMap Time.toModifiedJulianDay Time.ModifiedJulianDay
+
 instance Arbitrary Time.UniversalTime where
     arbitrary = Time.ModJulianDate <$> (2000 +) <$> arbitrary
     shrink    = (Time.ModJulianDate <$>) . shrink . Time.getModJulianDate
@@ -286,6 +301,9 @@ instance Arbitrary Time.DiffTime where
 instance CoArbitrary Time.DiffTime where
     coarbitrary = coarbitraryReal
 
+instance Function Time.DiffTime where
+    function = functionMap toRational fromRational
+
 instance Arbitrary Time.UTCTime where
     arbitrary =
         Time.UTCTime
@@ -298,6 +316,10 @@ instance Arbitrary Time.UTCTime where
 instance CoArbitrary Time.UTCTime where
     coarbitrary (Time.UTCTime day dayTime) =
         coarbitrary day >< coarbitrary dayTime
+
+instance Function Time.UTCTime where
+    function = functionMap (\(Time.UTCTime day dt) -> (day,dt))
+                           (uncurry Time.UTCTime)
 
 instance Arbitrary Time.NominalDiffTime where
     arbitrary = arbitrarySizedFractional
@@ -403,3 +425,6 @@ arbitraryBoundedEnum =
 coarbitraryEnum :: Enum a => a -> Gen c -> Gen c
 coarbitraryEnum = variant . fromEnum
 #endif
+
+instance (Function a, Integral a) => Function (Ratio a) where
+    function = functionMap (numerator &&& denominator) (uncurry (%))
