@@ -1,3 +1,13 @@
+0.3.11
+
+Author: Timo von Holtz <tvh@anchor.com.au>
+
+* Add some Instances for Function
+
+Author: Antoine Latter <aslatter@gmail.com>
+
+* Allow building against QuickCheck 2.8.
+
 0.3.10
 
 Author: Antoine Latter <aslatter@gmail.com>
