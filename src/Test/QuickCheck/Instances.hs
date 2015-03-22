@@ -426,5 +426,7 @@ coarbitraryEnum :: Enum a => a -> Gen c -> Gen c
 coarbitraryEnum = variant . fromEnum
 #endif
 
+#if !(MIN_VERSION_QuickCheck(2,8,0))
 instance (Function a, Integral a) => Function (Ratio a) where
     function = functionMap (numerator &&& denominator) (uncurry (%))
+#endif
