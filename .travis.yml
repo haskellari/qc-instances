@@ -16,12 +16,6 @@ language: haskell
 
 matrix:
   include:
-    - ghc: 7.4.1
-      env: CONFIG=platform/2012.2.0.0
-
-    - ghc: 7.4.2
-      env: CONFIG=platform/2012.4.0.0
-
     - ghc: 7.6
       env: CONFIG=platform/2013.2.0.0
 
