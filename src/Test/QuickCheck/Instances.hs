@@ -53,6 +53,11 @@ import qualified Data.Text.Lazy as TL
 import qualified Data.Time as Time
 import qualified Data.Time.Clock.TAI as Time
 import qualified Data.Tree as Tree
+import qualified Data.Scientific as Scientific
+import qualified Data.Vector as Vector
+import qualified Data.Vector.Storable as SVector
+import qualified Data.Vector.Generic as GVector
+import qualified Data.Vector.Unboxed as UVector
 import qualified System.Time as OldTime
 
 import Test.QuickCheck.Instances.LegacyNumeric()
@@ -94,6 +99,49 @@ shrinkArray a =
 coarbitraryArray :: (Array.IArray a e, Array.Ix i, CoArbitrary i, CoArbitrary e)
                     => a i e -> Gen c -> Gen c
 coarbitraryArray = coarbitrary . Array.assocs
+
+-- vector
+instance Arbitrary a => Arbitrary (Vector.Vector a) where
+    arbitrary = arbitraryVector
+    shrink = shrinkVector
+
+instance CoArbitrary a => CoArbitrary (Vector.Vector a) where
+    coarbitrary = coarbitraryVector
+
+instance (SVector.Storable a, Arbitrary a) => Arbitrary (SVector.Vector a) where
+    arbitrary = arbitraryVector
+    shrink = shrinkVector
+
+instance (SVector.Storable a, CoArbitrary a) => CoArbitrary (SVector.Vector a) where
+    coarbitrary = coarbitraryVector
+
+instance (UVector.Unbox a, Arbitrary a) => Arbitrary (UVector.Vector a) where
+    arbitrary = arbitraryVector
+    shrink = shrinkVector
+
+instance (UVector.Unbox a, CoArbitrary a) => CoArbitrary (UVector.Vector a) where
+    coarbitrary = coarbitraryVector
+
+arbitraryVector :: (GVector.Vector v a, Arbitrary a) => Gen (v a)
+arbitraryVector = GVector.fromList `fmap` arbitrary
+
+shrinkVector :: (GVector.Vector v a, Arbitrary a) => v a -> [v a]
+shrinkVector = fmap GVector.fromList . shrink . GVector.toList
+
+coarbitraryVector :: (GVector.Vector v a, CoArbitrary a) => v a -> Gen b -> Gen b
+coarbitraryVector = coarbitrary . GVector.toList
+
+-- scientific
+instance Arbitrary Scientific.Scientific where
+    arbitrary = do
+        c <- arbitrary
+        e <- arbitrary
+        return $ Scientific.scientific c e
+    shrink s = map (uncurry Scientific.scientific) $
+        shrink (Scientific.coefficient s, Scientific.base10Exponent s)
+
+instance CoArbitrary Scientific.Scientific where
+    coarbitrary s = coarbitrary (Scientific.coefficient s, Scientific.base10Exponent s)
 
 -- ByteString
 instance Arbitrary BS.ByteString where
