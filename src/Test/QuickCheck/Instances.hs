@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
-{-| 
+{-|
 Instances are provided for the types in the packages:
 
  * array
@@ -180,6 +180,7 @@ instance Function TL.Text where
     function = functionMap TL.unpack TL.pack
 
 -- Containers
+#if !(MIN_VERSION_QuickCheck(2,8,2))
 instance Arbitrary a => Arbitrary (IntMap.IntMap a) where
     arbitrary = IntMap.fromList <$> arbitrary
     shrink m = IntMap.fromList <$> shrink (IntMap.toList m)
@@ -217,6 +218,7 @@ instance CoArbitrary a => CoArbitrary (Set.Set a) where
 
 instance (Ord a, Function a) => Function (Set.Set a) where
     function = functionMap Set.toList Set.fromList
+#endif
 
 instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
     arbitrary = HS.fromList <$> arbitrary
@@ -236,7 +238,7 @@ instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n ->
       do val <- arbitrary
          let n' = n `div` 2
-         nodes <- 
+         nodes <-
              if n' > 0
               then do
                 k <- choose (0,n')
