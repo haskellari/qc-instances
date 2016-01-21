@@ -1,3 +1,13 @@
+0.3.12
+
+Author: Oleg Grenrus <oleg.grenrus@iki.fi>
+
+* Add vector and scientific instances
+
+Author: RyanGlScott <ryan.gl.scott@gmail.com>
+
+* Fix build with GHC 8.0.1, QuickCheck-2.8.2
+
 0.3.11
 
 Author: Timo von Holtz <tvh@anchor.com.au>
