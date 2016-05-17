@@ -13,7 +13,7 @@ Description:         QuickCheck instances.
                      your code.
                      .
                      For information on writing a test-suite with Cabal
-                     see <http://www.haskell.org/cabal/users-guide/#test-suites>
+                     see <https://www.haskell.org/cabal/users-guide/developing-packages.html#test-suites>
 
 License:             BSD3
 License-file:        LICENSE
