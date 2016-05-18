@@ -8,6 +8,8 @@ Instances are provided for the types in the packages:
 
  * bytestring
 
+ * case-insensitive
+
  * containers
 
  * old-time
@@ -40,6 +42,7 @@ import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.CaseInsensitive as CI
 import qualified Data.Fixed as Fixed -- required for QC < 2.5.0
 import qualified Data.IntMap as IntMap
 import qualified Data.IntSet as IntSet
@@ -480,3 +483,10 @@ coarbitraryEnum = variant . fromEnum
 instance (Function a, Integral a) => Function (Ratio a) where
     function = functionMap (numerator &&& denominator) (uncurry (%))
 #endif
+
+instance (CI.FoldCase a, Arbitrary a) => Arbitrary (CI.CI a) where
+    arbitrary = CI.mk <$> arbitrary
+    shrink = fmap CI.mk . shrink . CI.original
+
+instance CoArbitrary a => CoArbitrary (CI.CI a) where
+    coarbitrary = coarbitrary . CI.original
