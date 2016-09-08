@@ -492,6 +492,9 @@ instance (CI.FoldCase a, Arbitrary a) => Arbitrary (CI.CI a) where
 instance CoArbitrary a => CoArbitrary (CI.CI a) where
     coarbitrary = coarbitrary . CI.original
 
+instance (CI.FoldCase a, Function a) => Function (CI.CI a) where
+    function = functionMap CI.mk CI.original
+
 -- Tagged
 instance Arbitrary b => Arbitrary (Tagged.Tagged a b) where
     arbitrary = Tagged.Tagged <$> arbitrary
