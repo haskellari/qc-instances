@@ -51,6 +51,7 @@ import qualified Data.Sequence as Seq
 import qualified Data.Set as Set
 import qualified Data.HashSet as HS
 import qualified Data.HashMap.Lazy as HML
+import qualified Data.Tagged as Tagged (Tagged (..))
 import qualified Data.Text as TS
 import qualified Data.Text.Lazy as TL
 import qualified Data.Time as Time
@@ -490,3 +491,14 @@ instance (CI.FoldCase a, Arbitrary a) => Arbitrary (CI.CI a) where
 
 instance CoArbitrary a => CoArbitrary (CI.CI a) where
     coarbitrary = coarbitrary . CI.original
+
+-- Tagged
+instance Arbitrary b => Arbitrary (Tagged.Tagged a b) where
+    arbitrary = Tagged.Tagged <$> arbitrary
+    shrink = fmap Tagged.Tagged . shrink . Tagged.unTagged
+
+instance CoArbitrary b => CoArbitrary (Tagged.Tagged a b) where
+    coarbitrary = coarbitrary . Tagged.unTagged
+
+instance Function b => Function (Tagged.Tagged a b) where
+    function = functionMap Tagged.unTagged Tagged.Tagged
