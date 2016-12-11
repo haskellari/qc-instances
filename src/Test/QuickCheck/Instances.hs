@@ -31,6 +31,7 @@ module Test.QuickCheck.Instances () where
 
 import Control.Applicative
 import Control.Arrow
+import Control.Monad
 import Data.Foldable (toList)
 import Data.Int (Int32)
 import Data.Hashable
@@ -238,18 +239,22 @@ instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
     coarbitrary = coarbitrary . HML.toList
 
 instance Arbitrary a => Arbitrary (Tree.Tree a) where
-    arbitrary = sized $ \n ->
-      do val <- arbitrary
-         let n' = n `div` 2
-         nodes <-
-             if n' > 0
-              then do
-                k <- choose (0,n')
-                resize n' $ sequence [ arbitrary | _ <- [1..k] ]
-              else return []
-         return $ Tree.Node val nodes
+    arbitrary = sized $ \n -> do -- Sized is the size of the trees.
+        value <- arbitrary
+        pars <- arbPartition (n - 1)
+        forest <- forM pars $ \i -> resize i arbitrary
+        return $ Tree.Node value forest
+      where
+        arbPartition :: Int -> Gen [Int]
+        arbPartition 0 = pure []
+        arbPartition 1 = pure [1]
+        arbPartition k = do
+            first <- elements [1..k]
+            rest <- arbPartition $ k - first
+            return $ first : rest
+
     shrink (Tree.Node val forest) =
-        Tree.Node <$> shrink val <*> shrink forest
+         forest ++ [Tree.Node e fs | (e, fs) <- shrink (val, forest)]
 
 instance CoArbitrary a => CoArbitrary (Tree.Tree a) where
     coarbitrary (Tree.Node val forest) =
