@@ -239,6 +239,14 @@ instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (HML.HashMap 
 instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
     coarbitrary = coarbitrary . HML.toList
 
+#if MIN_VERSION_hashable(1,2,5)
+instance (Hashable a, Arbitrary a) => Arbitrary (Hashed a) where
+    arbitrary = hashed <$> arbitrary
+
+instance CoArbitrary (Hashed a) where
+    coarbitrary x = coarbitrary (hashed x)
+#endif
+
 instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n -> do -- Sized is the size of the trees.
         value <- arbitrary
