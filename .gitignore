@@ -1,6 +1,8 @@
 
 # Cabal-related stuff
 /dist/
+/dist-newstyle/
+/.ghc.environment.*
 /cabal-dev/
 /.cabal-sandbox/
 /cabal.sandbox.config
