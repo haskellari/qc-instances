@@ -36,7 +36,7 @@ Tested-With:
 
 Source-repository head
   type:     git
-  location: https://github.com/aslatter/qc-instances.git
+  location: https://github.com/phadej/qc-instances.git
 
 Library
   -- Modules exported by the library.
