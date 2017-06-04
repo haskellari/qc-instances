@@ -1,3 +1,8 @@
+0.3.14
+
+* Fix `Tree` bug.
+* Add `UUID` instances.
+
 0.3.13
 
 Author: Oleg Grenrus <oleg.grenrus@iki.fi>

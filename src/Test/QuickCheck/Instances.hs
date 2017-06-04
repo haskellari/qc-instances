@@ -65,6 +65,8 @@ import qualified Data.Vector.Generic as GVector
 import qualified Data.Vector.Unboxed as UVector
 import qualified System.Time as OldTime
 
+import Debug.Trace
+
 import Test.QuickCheck.Instances.LegacyNumeric()
 
 -- Array
@@ -250,17 +252,18 @@ instance CoArbitrary (Hashed a) where
 instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n -> do -- Sized is the size of the trees.
         value <- arbitrary
-        pars <- arbPartition (n - 1)
+        pars <- arbPartition (n - 1) -- can go negative!
         forest <- forM pars $ \i -> resize i arbitrary
         return $ Tree.Node value forest
       where
         arbPartition :: Int -> Gen [Int]
-        arbPartition 0 = pure []
-        arbPartition 1 = pure [1]
-        arbPartition k = do
-            first <- elements [1..k]
-            rest <- arbPartition $ k - first
-            return $ first : rest
+        arbPartition k = case compare k 1 of
+            LT -> pure []
+            EQ -> pure [1]
+            GT -> do
+                first <- elements [1..k]
+                rest <- arbPartition $ k - first
+                return $ first : rest
 
     shrink (Tree.Node val forest) =
          forest ++ [Tree.Node e fs | (e, fs) <- shrink (val, forest)]

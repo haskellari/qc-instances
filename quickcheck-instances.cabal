@@ -1,5 +1,5 @@
 Name:                quickcheck-instances
-Version:             0.3.13
+Version:             0.3.14
 Synopsis:            Common quickcheck instances
 Description:         QuickCheck instances.
                      .
@@ -25,7 +25,7 @@ Copyright:           Copyright Antoine Latter, 2012-2014
 Category:            Testing
 Build-type:          Simple
 Extra-source-files:  CHANGES
-Cabal-version:       >=1.6
+Cabal-version:       >=1.8
 Tested-With:
   GHC==7.4.2,
   GHC==7.6.3,
@@ -62,3 +62,12 @@ Library
   Other-modules:       Test.QuickCheck.Instances.LegacyNumeric
   -- Build-tools:
 
+test-suite self-test
+  type: exitcode-stdio-1.0
+  main-is: Tests.hs
+  hs-source-dirs: test
+  build-depends:
+    base,
+    QuickCheck,
+    quickcheck-instances,
+    containers
