@@ -38,6 +38,7 @@ import Data.Hashable
 import Data.Ratio
 import Test.QuickCheck
 import Test.QuickCheck.Function
+import Data.Word (Word32)
 
 import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
@@ -64,6 +65,9 @@ import qualified Data.Vector.Storable as SVector
 import qualified Data.Vector.Generic as GVector
 import qualified Data.Vector.Unboxed as UVector
 import qualified System.Time as OldTime
+import qualified Data.UUID.Types as UUID
+
+import Debug.Trace
 
 import Test.QuickCheck.Instances.LegacyNumeric()
 
@@ -250,17 +254,18 @@ instance CoArbitrary (Hashed a) where
 instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n -> do -- Sized is the size of the trees.
         value <- arbitrary
-        pars <- arbPartition (n - 1)
+        pars <- arbPartition (n - 1) -- can go negative!
         forest <- forM pars $ \i -> resize i arbitrary
         return $ Tree.Node value forest
       where
         arbPartition :: Int -> Gen [Int]
-        arbPartition 0 = pure []
-        arbPartition 1 = pure [1]
-        arbPartition k = do
-            first <- elements [1..k]
-            rest <- arbPartition $ k - first
-            return $ first : rest
+        arbPartition k = case compare k 1 of
+            LT -> pure []
+            EQ -> pure [1]
+            GT -> do
+                first <- elements [1..k]
+                rest <- arbPartition $ k - first
+                return $ first : rest
 
     shrink (Tree.Node val forest) =
          forest ++ [Tree.Node e fs | (e, fs) <- shrink (val, forest)]
@@ -518,3 +523,19 @@ instance CoArbitrary b => CoArbitrary (Tagged.Tagged a b) where
 
 instance Function b => Function (Tagged.Tagged a b) where
     function = functionMap Tagged.unTagged Tagged.Tagged
+
+-- uuid
+
+uuidFromWords :: (Word32, Word32, Word32, Word32) -> UUID.UUID
+uuidFromWords (a,b,c,d) = UUID.fromWords a b c d
+
+-- | Uniform distribution.
+instance Arbitrary UUID.UUID where
+    arbitrary = uuidFromWords <$> arbitrary
+    shrink = map uuidFromWords . shrink . UUID.toWords
+
+instance CoArbitrary UUID.UUID where
+    coarbitrary = coarbitrary . UUID.toWords
+
+instance Function UUID.UUID where
+    function = functionMap UUID.toWords uuidFromWords
