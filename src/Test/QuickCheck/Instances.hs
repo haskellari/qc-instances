@@ -211,9 +211,15 @@ instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
 instance CoArbitrary a => CoArbitrary (HS.HashSet a) where
     coarbitrary = coarbitrary . HS.toList
 
+instance (Hashable k, Eq k, Arbitrary k) => Arbitrary1 (HML.HashMap k) where
+    liftArbitrary arb =
+        HML.fromList <$> liftArbitrary (liftArbitrary2 arbitrary arb)
+    liftShrink shr m =
+        HML.fromList <$> liftShrink (liftShrink2 shrink shr) (HML.toList m)
+
 instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (HML.HashMap k v) where
-    arbitrary = HML.fromList <$> arbitrary
-    shrink m = HML.fromList <$> shrink (HML.toList m)
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
     coarbitrary = coarbitrary . HML.toList
@@ -234,13 +240,15 @@ instance CoArbitrary (Hashed a) where
 -- containers
 -------------------------------------------------------------------------------
 
-instance Arbitrary a => Arbitrary (Tree.Tree a) where
-    arbitrary = sized $ \n -> do -- Sized is the size of the trees.
-        value <- arbitrary
-        pars <- arbPartition (n - 1) -- can go negative!
-        forest <- for pars $ \i -> resize i arbitrary
-        return $ Tree.Node value forest
+instance Arbitrary1 Tree.Tree where
+    liftArbitrary arb = go
       where
+        go = sized $ \n -> do -- Sized is the size of the trees.
+            value <- arb
+            pars <- arbPartition (n - 1) -- can go negative!
+            forest <- for pars $ \i -> resize i go
+            return $ Tree.Node value forest
+
         arbPartition :: Int -> Gen [Int]
         arbPartition k = case compare k 1 of
             LT -> pure []
@@ -250,8 +258,16 @@ instance Arbitrary a => Arbitrary (Tree.Tree a) where
                 rest <- arbPartition $ k - first
                 return $ first : rest
 
-    shrink (Tree.Node val forest) =
-         forest ++ [Tree.Node e fs | (e, fs) <- shrink (val, forest)]
+    liftShrink shr = go 
+      where
+        go (Tree.Node val forest) = forest ++
+            [ Tree.Node e fs
+            | (e, fs) <- liftShrink2 shr (liftShrink go) (val, forest)
+            ]
+
+instance Arbitrary a => Arbitrary (Tree.Tree a) where
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance CoArbitrary a => CoArbitrary (Tree.Tree a) where
     coarbitrary (Tree.Node val forest) =
