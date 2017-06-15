@@ -580,12 +580,13 @@ instance Function a => Function (NonEmpty a) where
 -- transformers
 -------------------------------------------------------------------------------
 
--- TODO: Coarbitrary and Function
+-- TODO: CoArbitrary and Function, needs Coarbitrary1 and Function1
 
 instance (Arbitrary1 f, Arbitrary1 g) => Arbitrary1 (Sum f g) where
   liftArbitrary arb = oneof [fmap InL (liftArbitrary arb), fmap InR (liftArbitrary arb)]
   liftShrink shr (InL f) = map InL (liftShrink shr f)
   liftShrink shr (InR g) = map InR (liftShrink shr g)
+
 instance (Arbitrary1 f, Arbitrary1 g, Arbitrary a) => Arbitrary (Sum f g a) where
   arbitrary = arbitrary1
   shrink = shrink1
