@@ -29,57 +29,58 @@ For information on writing a test-suite with Cabal see
 -}
 module Test.QuickCheck.Instances () where
 
-import Control.Applicative
-import Control.Monad
-import Data.Int (Int32)
-import Data.Hashable
-import Test.QuickCheck
-import Test.QuickCheck.Function
-import Data.Word (Word32)
-import Data.Ix (Ix (..))
+import Prelude ()
+import Prelude.Compat
 
-import Numeric.Natural (Natural)
-import Data.Proxy (Proxy (..))
+import Control.Applicative (liftA2)
+import Data.Functor.Sum (Sum (..))
+import Data.Hashable (Hashable, Hashed, hashed)
+import Data.Int (Int32)
+import Data.Ix (Ix (..))
 import Data.List.NonEmpty (NonEmpty (..), nonEmpty)
 import Data.Maybe (mapMaybe)
-import Data.Functor.Sum (Sum (..))
+import Data.Proxy (Proxy (..))
+import Data.Traversable (for)
+import Data.Word (Word32)
+import Numeric.Natural (Natural)
+
+import Test.QuickCheck
+import Test.QuickCheck.Function (functionIntegral)
 
 import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.CaseInsensitive as CI
-import qualified Data.HashSet as HS
 import qualified Data.HashMap.Lazy as HML
+import qualified Data.HashSet as HS
+import qualified Data.Scientific as Scientific
 import qualified Data.Tagged as Tagged (Tagged (..))
 import qualified Data.Text as TS
 import qualified Data.Text.Lazy as TL
 import qualified Data.Time as Time
 import qualified Data.Time.Clock.TAI as Time
 import qualified Data.Tree as Tree
-import qualified Data.Scientific as Scientific
+import qualified Data.UUID.Types as UUID
 import qualified Data.Vector as Vector
-import qualified Data.Vector.Storable as SVector
 import qualified Data.Vector.Generic as GVector
+import qualified Data.Vector.Storable as SVector
 import qualified Data.Vector.Unboxed as UVector
 import qualified System.Time as OldTime
-import qualified Data.UUID.Types as UUID
-
-import Debug.Trace
 
 -------------------------------------------------------------------------------
 -- array
 -------------------------------------------------------------------------------
 
 instance (Num i, Ix i, Arbitrary i, Arbitrary a) => Arbitrary (Array.Array i a) where
-  arbitrary = liftM2 makeArray arbitrary arbitrary
+  arbitrary = liftA2 makeArray arbitrary arbitrary
   shrink = shrinkArray
 
 instance (Ix i, CoArbitrary i, CoArbitrary a) => CoArbitrary (Array.Array i a) where
   coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
 
 instance (Num i, Ix i, Array.IArray Array.UArray a, Arbitrary i, Arbitrary a) => Arbitrary (Array.UArray i a) where
-  arbitrary = liftM2 makeArray arbitrary arbitrary
+  arbitrary = liftA2 makeArray arbitrary arbitrary
   shrink = shrinkArray
 
 instance (Ix i, Array.IArray Array.UArray a, CoArbitrary i, CoArbitrary a) => CoArbitrary (Array.UArray i a) where
@@ -224,7 +225,7 @@ instance Arbitrary a => Arbitrary (Tree.Tree a) where
     arbitrary = sized $ \n -> do -- Sized is the size of the trees.
         value <- arbitrary
         pars <- arbPartition (n - 1) -- can go negative!
-        forest <- forM pars $ \i -> resize i arbitrary
+        forest <- for pars $ \i -> resize i arbitrary
         return $ Tree.Node value forest
       where
         arbPartition :: Int -> Gen [Int]
@@ -522,7 +523,7 @@ instance Function Natural where
 -------------------------------------------------------------------------------
 
 instance Arbitrary1 NonEmpty where
-  liftArbitrary arb = liftM2 (:|) arb (liftArbitrary arb)
+  liftArbitrary arb = liftA2 (:|) arb (liftArbitrary arb)
   liftShrink shr (x :| xs) = mapMaybe nonEmpty . liftShrink shr $ x : xs
 
 instance Arbitrary a => Arbitrary (NonEmpty a) where
