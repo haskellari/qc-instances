@@ -72,23 +72,31 @@ import qualified System.Time as OldTime
 -- array
 -------------------------------------------------------------------------------
 
+instance (Num i, Ix i, Arbitrary i) => Arbitrary1 (Array.Array i) where
+    liftArbitrary = liftA2 makeArray arbitrary . liftArbitrary
+    liftShrink = shrinkArray
+
 instance (Num i, Ix i, Arbitrary i, Arbitrary a) => Arbitrary (Array.Array i a) where
-  arbitrary = liftA2 makeArray arbitrary arbitrary
-  shrink = shrinkArray
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance (Ix i, CoArbitrary i, CoArbitrary a) => CoArbitrary (Array.Array i a) where
-  coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
+    coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
+
 
 instance (Num i, Ix i, Array.IArray Array.UArray a, Arbitrary i, Arbitrary a) => Arbitrary (Array.UArray i a) where
-  arbitrary = liftA2 makeArray arbitrary arbitrary
-  shrink = shrinkArray
+    arbitrary = liftA2 makeArray arbitrary arbitrary
+    shrink = shrinkArray shrink
 
 instance (Ix i, Array.IArray Array.UArray a, CoArbitrary i, CoArbitrary a) => CoArbitrary (Array.UArray i a) where
-  coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
+    coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
 
-shrinkArray :: (Num i, Ix i, Array.IArray arr a, Arbitrary i, Arbitrary a) => arr i a -> [arr i a]
-shrinkArray arr =
-  [ makeArray lo xs | xs <- shrink (Array.elems arr) ] ++
+
+shrinkArray
+    :: (Num i, Ix i, Array.IArray arr a, Arbitrary i)
+    => (a -> [a]) -> arr i a -> [arr i a]
+shrinkArray shr arr =
+  [ makeArray lo xs | xs <- liftShrink shr (Array.elems arr) ] ++
   [ makeArray lo' (Array.elems arr) | lo' <- shrink lo ]
   where
     (lo, _) = Array.bounds arr
