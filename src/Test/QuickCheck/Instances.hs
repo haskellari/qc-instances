@@ -490,9 +490,17 @@ instance (CI.FoldCase a, Function a) => Function (CI.CI a) where
 -- tagged
 -------------------------------------------------------------------------------
 
+instance Arbitrary2 Tagged.Tagged where
+    liftArbitrary2 _ arb = Tagged.Tagged <$> arb
+    liftShrink2 _ shr = fmap Tagged.Tagged . shr . Tagged.unTagged
+
+instance Arbitrary1 (Tagged.Tagged a) where
+    liftArbitrary arb = Tagged.Tagged <$> arb
+    liftShrink shr = fmap Tagged.Tagged . shr . Tagged.unTagged
+
 instance Arbitrary b => Arbitrary (Tagged.Tagged a b) where
-    arbitrary = Tagged.Tagged <$> arbitrary
-    shrink = fmap Tagged.Tagged . shrink . Tagged.unTagged
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance CoArbitrary b => CoArbitrary (Tagged.Tagged a b) where
     coarbitrary = coarbitrary . Tagged.unTagged
