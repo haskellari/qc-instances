@@ -108,12 +108,17 @@ makeArray lo xs = Array.listArray (lo, lo + fromIntegral (length xs - 1)) xs
 -- vector
 -------------------------------------------------------------------------------
 
+instance Arbitrary1 Vector.Vector where
+    liftArbitrary = fmap Vector.fromList . liftArbitrary
+    liftShrink shr = fmap Vector.fromList . liftShrink shr . Vector.toList
+
 instance Arbitrary a => Arbitrary (Vector.Vector a) where
-    arbitrary = arbitraryVector
-    shrink = shrinkVector
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance CoArbitrary a => CoArbitrary (Vector.Vector a) where
     coarbitrary = coarbitraryVector
+
 
 instance (SVector.Storable a, Arbitrary a) => Arbitrary (SVector.Vector a) where
     arbitrary = arbitraryVector
