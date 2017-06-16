@@ -1,5 +1,5 @@
 Name:                quickcheck-instances
-Version:             0.3.14
+Version:             0.3.15
 Synopsis:            Common quickcheck instances
 Description:         QuickCheck instances.
                      .
@@ -39,29 +39,38 @@ Source-repository head
   location: https://github.com/phadej/qc-instances.git
 
 Library
-  -- Modules exported by the library.
   Exposed-modules:     Test.QuickCheck.Instances
   Hs-Source-Dirs:      src
-  Build-depends:       base >=4.5 && < 5,
+  Build-depends:
+    base       >=4.5  && <4.11,
+    QuickCheck >=2.10 && <2.11,
 
-                       array >= 0.3 && < 0.6,
-                       bytestring >= 0.9 && < 0.11,
-                       case-insensitive >=1.2.0.4 && <1.3,
-                       containers >= 0.3 && < 0.6,
-                       hashable >= 1.1.2.3 && < 1.3,
-                       old-time >= 1.0 && < 1.2,
-                       QuickCheck >= 2.1 && < 2.10,
-                       scientific >=0.2 && <0.4,
-                       tagged >= 0.8.5 && <0.9,
-                       text >= 0.7 && < 1.3,
-                       time >= 1.1 && < 1.9,
-                       unordered-containers >= 0.2.1 && < 0.3,
-                       uuid-types >=1.0.3 && <1.1,
-                       vector >= 0.9 && <0.13
+    array                >=0.3     && <0.6,
+    base-compat          >=0.9.3   && <0.10,
+    bytestring           >=0.9     && <0.11,
+    case-insensitive     >=1.2.0.4 && <1.3,
+    containers           >=0.3     && <0.6,
+    hashable             >=1.1.2.3 && <1.3,
+    old-time             >=1.0     && <1.2,
+    scientific           >=0.2     && <0.4,
+    tagged               >=0.8.5   && <0.9,
+    text                 >=0.7     && <1.3,
+    time                 >=1.1     && <1.9,
+    transformers         >=0.3     && <0.6,
+    transformers-compat  >=0.4     && <0.6,
+    unordered-containers >=0.2.1   && <0.3,
+    uuid-types           >=1.0.3   && <1.1,
+    vector               >=0.9     && <0.13
+
+  if !impl(ghc >= 8.0)
+    build-depends:
+      semigroups ==0.18.*
+
+  if !impl(ghc >= 7.10)
+    build-depends:
+      nats >=1 && <1.2
 
   Ghc-options:         -Wall
-  Other-modules:       Test.QuickCheck.Instances.LegacyNumeric
-  -- Build-tools:
 
 test-suite self-test
   type: exitcode-stdio-1.0

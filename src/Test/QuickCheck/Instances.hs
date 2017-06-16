@@ -29,93 +29,96 @@ For information on writing a test-suite with Cabal see
 -}
 module Test.QuickCheck.Instances () where
 
-import Control.Applicative
-import Control.Arrow
-import Control.Monad
-import Data.Foldable (toList)
+import Prelude ()
+import Prelude.Compat
+
+import Control.Applicative (liftA2)
+import Data.Functor.Sum (Sum (..))
+import Data.Hashable (Hashable, Hashed, hashed)
 import Data.Int (Int32)
-import Data.Hashable
-import Data.Ratio
-import Test.QuickCheck
-import Test.QuickCheck.Function
+import Data.Ix (Ix (..))
+import Data.List.NonEmpty (NonEmpty (..), nonEmpty)
+import Data.Maybe (mapMaybe)
+import Data.Proxy (Proxy (..))
+import Data.Traversable (for)
 import Data.Word (Word32)
+import Numeric.Natural (Natural)
+
+import Test.QuickCheck
+import Test.QuickCheck.Function (functionIntegral)
 
 import qualified Data.Array.IArray as Array
 import qualified Data.Array.Unboxed as Array
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.CaseInsensitive as CI
-import qualified Data.Fixed as Fixed -- required for QC < 2.5.0
-import qualified Data.IntMap as IntMap
-import qualified Data.IntSet as IntSet
-import qualified Data.Map as Map
-import qualified Data.Sequence as Seq
-import qualified Data.Set as Set
-import qualified Data.HashSet as HS
 import qualified Data.HashMap.Lazy as HML
+import qualified Data.HashSet as HS
+import qualified Data.Scientific as Scientific
 import qualified Data.Tagged as Tagged (Tagged (..))
 import qualified Data.Text as TS
 import qualified Data.Text.Lazy as TL
 import qualified Data.Time as Time
 import qualified Data.Time.Clock.TAI as Time
 import qualified Data.Tree as Tree
-import qualified Data.Scientific as Scientific
+import qualified Data.UUID.Types as UUID
 import qualified Data.Vector as Vector
-import qualified Data.Vector.Storable as SVector
 import qualified Data.Vector.Generic as GVector
+import qualified Data.Vector.Storable as SVector
 import qualified Data.Vector.Unboxed as UVector
 import qualified System.Time as OldTime
-import qualified Data.UUID.Types as UUID
 
-import Debug.Trace
+-------------------------------------------------------------------------------
+-- array
+-------------------------------------------------------------------------------
 
-import Test.QuickCheck.Instances.LegacyNumeric()
+instance (Num i, Ix i, Arbitrary i) => Arbitrary1 (Array.Array i) where
+    liftArbitrary = liftA2 makeArray arbitrary . liftArbitrary
+    liftShrink = shrinkArray
 
--- Array
+instance (Num i, Ix i, Arbitrary i, Arbitrary a) => Arbitrary (Array.Array i a) where
+    arbitrary = arbitrary1
+    shrink = shrink1
 
-instance (Array.Ix i, Arbitrary i, Arbitrary e) => Arbitrary (Array.Array i e) where
-    arbitrary = arbitraryArray
-    shrink    = shrinkArray
+instance (Ix i, CoArbitrary i, CoArbitrary a) => CoArbitrary (Array.Array i a) where
+    coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
 
-instance (Array.IArray Array.UArray e, Array.Ix i, Arbitrary i, Arbitrary e)
-        => Arbitrary (Array.UArray i e) where
-    arbitrary = arbitraryArray
-    shrink    = shrinkArray
 
-instance (Array.Ix i, CoArbitrary i, CoArbitrary e) => CoArbitrary (Array.Array i e) where
-    coarbitrary = coarbitraryArray
+instance (Num i, Ix i, Array.IArray Array.UArray a, Arbitrary i, Arbitrary a) => Arbitrary (Array.UArray i a) where
+    arbitrary = liftA2 makeArray arbitrary arbitrary
+    shrink = shrinkArray shrink
 
-instance (Array.IArray Array.UArray e, Array.Ix i, CoArbitrary i, CoArbitrary e)
-        => CoArbitrary (Array.UArray i e) where
-    coarbitrary = coarbitraryArray
+instance (Ix i, Array.IArray Array.UArray a, CoArbitrary i, CoArbitrary a) => CoArbitrary (Array.UArray i a) where
+    coarbitrary arr = coarbitrary (Array.bounds arr, Array.elems arr)
 
-arbitraryArray :: (Array.IArray a e, Array.Ix i, Arbitrary i, Arbitrary e) => Gen (a i e)
-arbitraryArray = do
-      b1 <- arbitrary
-      b2 <- arbitrary
-      let bounds =
-              if b1 < b2 then (b1,b2) else (b2,b1)
-      elms <- vector (Array.rangeSize bounds)
-      return $ Array.listArray bounds elms
 
-shrinkArray :: (Array.IArray a e, Array.Ix i, Arbitrary i, Arbitrary e) => a i e -> [a i e]
-shrinkArray a =
-    -- Shrink each elements but don't change the size of array.
-    let bounds = Array.bounds a
-        elmss  = shrink <$> Array.elems a
-    in Array.listArray bounds <$> elmss
+shrinkArray
+    :: (Num i, Ix i, Array.IArray arr a, Arbitrary i)
+    => (a -> [a]) -> arr i a -> [arr i a]
+shrinkArray shr arr =
+  [ makeArray lo xs | xs <- liftShrink shr (Array.elems arr) ] ++
+  [ makeArray lo' (Array.elems arr) | lo' <- shrink lo ]
+  where
+    (lo, _) = Array.bounds arr
 
-coarbitraryArray :: (Array.IArray a e, Array.Ix i, CoArbitrary i, CoArbitrary e)
-                    => a i e -> Gen c -> Gen c
-coarbitraryArray = coarbitrary . Array.assocs
+makeArray :: (Num i, Ix i, Array.IArray arr a) => i -> [a] -> arr i a
+makeArray lo xs = Array.listArray (lo, lo + fromIntegral (length xs - 1)) xs
 
+-------------------------------------------------------------------------------
 -- vector
+-------------------------------------------------------------------------------
+
+instance Arbitrary1 Vector.Vector where
+    liftArbitrary = fmap Vector.fromList . liftArbitrary
+    liftShrink shr = fmap Vector.fromList . liftShrink shr . Vector.toList
+
 instance Arbitrary a => Arbitrary (Vector.Vector a) where
-    arbitrary = arbitraryVector
-    shrink = shrinkVector
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance CoArbitrary a => CoArbitrary (Vector.Vector a) where
     coarbitrary = coarbitraryVector
+
 
 instance (SVector.Storable a, Arbitrary a) => Arbitrary (SVector.Vector a) where
     arbitrary = arbitraryVector
@@ -140,7 +143,10 @@ shrinkVector = fmap GVector.fromList . shrink . GVector.toList
 coarbitraryVector :: (GVector.Vector v a, CoArbitrary a) => v a -> Gen b -> Gen b
 coarbitraryVector = coarbitrary . GVector.toList
 
+-------------------------------------------------------------------------------
 -- scientific
+-------------------------------------------------------------------------------
+
 instance Arbitrary Scientific.Scientific where
     arbitrary = do
         c <- arbitrary
@@ -152,7 +158,10 @@ instance Arbitrary Scientific.Scientific where
 instance CoArbitrary Scientific.Scientific where
     coarbitrary s = coarbitrary (Scientific.coefficient s, Scientific.base10Exponent s)
 
--- ByteString
+-------------------------------------------------------------------------------
+-- bytestring
+-------------------------------------------------------------------------------
+
 instance Arbitrary BS.ByteString where
     arbitrary = BS.pack <$> arbitrary
     shrink xs = BS.pack <$> shrink (BS.unpack xs)
@@ -167,7 +176,10 @@ instance CoArbitrary BS.ByteString where
 instance CoArbitrary BL.ByteString where
     coarbitrary = coarbitrary . BL.unpack
 
--- Text
+-------------------------------------------------------------------------------
+-- text
+-------------------------------------------------------------------------------
+
 instance Arbitrary TS.Text where
     arbitrary = TS.pack <$> arbitrary
     shrink xs = TS.pack <$> shrink (TS.unpack xs)
@@ -188,46 +200,9 @@ instance Function TS.Text where
 instance Function TL.Text where
     function = functionMap TL.unpack TL.pack
 
--- Containers
-#if !(MIN_VERSION_QuickCheck(2,8,2))
-instance Arbitrary a => Arbitrary (IntMap.IntMap a) where
-    arbitrary = IntMap.fromList <$> arbitrary
-    shrink m = IntMap.fromList <$> shrink (IntMap.toList m)
-
-instance CoArbitrary a => CoArbitrary (IntMap.IntMap a) where
-    coarbitrary = coarbitrary . IntMap.toList
-
-instance Arbitrary IntSet.IntSet where
-    arbitrary = IntSet.fromList <$> arbitrary
-    shrink set = IntSet.fromList <$> shrink (IntSet.toList set)
-
-instance CoArbitrary IntSet.IntSet where
-    coarbitrary = coarbitrary . IntSet.toList
-
-instance (Ord k, Arbitrary k, Arbitrary v) => Arbitrary (Map.Map k v) where
-    arbitrary = Map.fromList <$> arbitrary
-    shrink m = Map.fromList <$> shrink (Map.toList m)
-
-instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (Map.Map k v) where
-    coarbitrary = coarbitrary . Map.toList
-
-instance Arbitrary a => Arbitrary (Seq.Seq a) where
-    arbitrary = Seq.fromList <$> arbitrary
-    shrink xs = Seq.fromList <$> shrink (toList xs)
-
-instance CoArbitrary a => CoArbitrary (Seq.Seq a) where
-    coarbitrary = coarbitrary . toList
-
-instance (Ord a, Arbitrary a) => Arbitrary (Set.Set a) where
-    arbitrary = Set.fromList <$> arbitrary
-    shrink set = Set.fromList <$> shrink (Set.toList set)
-
-instance CoArbitrary a => CoArbitrary (Set.Set a) where
-    coarbitrary = coarbitrary . Set.toList
-
-instance (Ord a, Function a) => Function (Set.Set a) where
-    function = functionMap Set.toList Set.fromList
-#endif
+-------------------------------------------------------------------------------
+-- unordered-containers
+-------------------------------------------------------------------------------
 
 instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
     arbitrary = HS.fromList <$> arbitrary
@@ -236,12 +211,22 @@ instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
 instance CoArbitrary a => CoArbitrary (HS.HashSet a) where
     coarbitrary = coarbitrary . HS.toList
 
+instance (Hashable k, Eq k, Arbitrary k) => Arbitrary1 (HML.HashMap k) where
+    liftArbitrary arb =
+        HML.fromList <$> liftArbitrary (liftArbitrary2 arbitrary arb)
+    liftShrink shr m =
+        HML.fromList <$> liftShrink (liftShrink2 shrink shr) (HML.toList m)
+
 instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (HML.HashMap k v) where
-    arbitrary = HML.fromList <$> arbitrary
-    shrink m = HML.fromList <$> shrink (HML.toList m)
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
     coarbitrary = coarbitrary . HML.toList
+
+-------------------------------------------------------------------------------
+-- hashable
+-------------------------------------------------------------------------------
 
 #if MIN_VERSION_hashable(1,2,5)
 instance (Hashable a, Arbitrary a) => Arbitrary (Hashed a) where
@@ -251,13 +236,19 @@ instance CoArbitrary (Hashed a) where
     coarbitrary x = coarbitrary (hashed x)
 #endif
 
-instance Arbitrary a => Arbitrary (Tree.Tree a) where
-    arbitrary = sized $ \n -> do -- Sized is the size of the trees.
-        value <- arbitrary
-        pars <- arbPartition (n - 1) -- can go negative!
-        forest <- forM pars $ \i -> resize i arbitrary
-        return $ Tree.Node value forest
+-------------------------------------------------------------------------------
+-- containers
+-------------------------------------------------------------------------------
+
+instance Arbitrary1 Tree.Tree where
+    liftArbitrary arb = go
       where
+        go = sized $ \n -> do -- Sized is the size of the trees.
+            value <- arb
+            pars <- arbPartition (n - 1) -- can go negative!
+            forest <- for pars $ \i -> resize i go
+            return $ Tree.Node value forest
+
         arbPartition :: Int -> Gen [Int]
         arbPartition k = case compare k 1 of
             LT -> pure []
@@ -267,14 +258,25 @@ instance Arbitrary a => Arbitrary (Tree.Tree a) where
                 rest <- arbPartition $ k - first
                 return $ first : rest
 
-    shrink (Tree.Node val forest) =
-         forest ++ [Tree.Node e fs | (e, fs) <- shrink (val, forest)]
+    liftShrink shr = go 
+      where
+        go (Tree.Node val forest) = forest ++
+            [ Tree.Node e fs
+            | (e, fs) <- liftShrink2 shr (liftShrink go) (val, forest)
+            ]
+
+instance Arbitrary a => Arbitrary (Tree.Tree a) where
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance CoArbitrary a => CoArbitrary (Tree.Tree a) where
     coarbitrary (Tree.Node val forest) =
-        coarbitrary val >< coarbitrary forest
+        coarbitrary val . coarbitrary forest
 
+-------------------------------------------------------------------------------
 -- old-time
+-------------------------------------------------------------------------------
+
 instance Arbitrary OldTime.Month where
     arbitrary = arbitraryBoundedEnum
 
@@ -297,30 +299,30 @@ instance Arbitrary OldTime.ClockTime where
 
 instance CoArbitrary OldTime.ClockTime where
     coarbitrary (OldTime.TOD s p) =
-        coarbitrary s >< coarbitrary p
+        coarbitrary s . coarbitrary p
 
 instance Arbitrary OldTime.TimeDiff where
     -- a bit of a cheat ...
     arbitrary =
         OldTime.normalizeTimeDiff <$>
            (OldTime.diffClockTimes <$> arbitrary <*> arbitrary)
-    shrink td@(OldTime.TimeDiff year month day hour minute second picosec) =
+    shrink td@(OldTime.TimeDiff year month day hour minute sec picosec) =
         [ td { OldTime.tdYear    = y' } | y' <- shrink year    ] ++
         [ td { OldTime.tdMonth   = m' } | m' <- shrink month   ] ++
         [ td { OldTime.tdDay     = d' } | d' <- shrink day     ] ++
         [ td { OldTime.tdHour    = h' } | h' <- shrink hour    ] ++
         [ td { OldTime.tdMin     = m' } | m' <- shrink minute  ] ++
-        [ td { OldTime.tdSec     = s' } | s' <- shrink second  ] ++
+        [ td { OldTime.tdSec     = s' } | s' <- shrink sec     ] ++
         [ td { OldTime.tdPicosec = p' } | p' <- shrink picosec ]
 
 instance CoArbitrary OldTime.TimeDiff where
-    coarbitrary (OldTime.TimeDiff year month day hour minute second picosec) =
-        coarbitrary year    ><
-        coarbitrary month   ><
-        coarbitrary day     ><
-        coarbitrary hour    ><
-        coarbitrary minute  ><
-        coarbitrary second  ><
+    coarbitrary (OldTime.TimeDiff year month day hour minute sec picosec) =
+        coarbitrary year    .
+        coarbitrary month   .
+        coarbitrary day     .
+        coarbitrary hour    .
+        coarbitrary minute  .
+        coarbitrary sec     .
         coarbitrary picosec
 
 -- UTC only
@@ -329,22 +331,25 @@ instance Arbitrary OldTime.CalendarTime where
 
 instance CoArbitrary OldTime.CalendarTime where
     coarbitrary (OldTime.CalendarTime
-                        year month day hour minute second picosec
+                        year month day hour minute sec picosec
                         wDay yDay tzName tz isDST) =
-        coarbitrary year    ><
-        coarbitrary month   ><
-        coarbitrary day     ><
-        coarbitrary hour    ><
-        coarbitrary minute  ><
-        coarbitrary second  ><
-        coarbitrary picosec ><
-        coarbitrary wDay    ><
-        coarbitrary yDay    ><
-        coarbitrary tzName  ><
-        coarbitrary tz      ><
+        coarbitrary year    .
+        coarbitrary month   .
+        coarbitrary day     .
+        coarbitrary hour    .
+        coarbitrary minute  .
+        coarbitrary sec     .
+        coarbitrary picosec .
+        coarbitrary wDay    .
+        coarbitrary yDay    .
+        coarbitrary tzName  .
+        coarbitrary tz      .
         coarbitrary isDST
 
+-------------------------------------------------------------------------------
 -- time
+-------------------------------------------------------------------------------
+
 instance Arbitrary Time.Day where
     arbitrary = Time.ModifiedJulianDay <$> (2000 +) <$> arbitrary
     shrink    = (Time.ModifiedJulianDay <$>) . shrink . Time.toModifiedJulianDay
@@ -387,7 +392,7 @@ instance Arbitrary Time.UTCTime where
 
 instance CoArbitrary Time.UTCTime where
     coarbitrary (Time.UTCTime day dayTime) =
-        coarbitrary day >< coarbitrary dayTime
+        coarbitrary day . coarbitrary dayTime
 
 instance Function Time.UTCTime where
     function = functionMap (\(Time.UTCTime day dt) -> (day,dt))
@@ -413,7 +418,7 @@ instance Arbitrary Time.TimeZone where
 
 instance CoArbitrary Time.TimeZone where
     coarbitrary (Time.TimeZone minutes summerOnly name) =
-        coarbitrary minutes >< coarbitrary summerOnly >< coarbitrary name
+        coarbitrary minutes . coarbitrary summerOnly . coarbitrary name
 
 instance Arbitrary Time.TimeOfDay where
     arbitrary =
@@ -421,14 +426,14 @@ instance Arbitrary Time.TimeOfDay where
          <$> choose (0, 23) -- hour
          <*> choose (0, 59) -- minute
          <*> (fromRational . toRational <$> choose (0::Double, 60)) -- picoseconds, via double
-    shrink tod@(Time.TimeOfDay hour minute second) =
+    shrink tod@(Time.TimeOfDay hour minute sec) =
         [ tod { Time.todHour = h' } | h' <- shrink hour   ] ++
         [ tod { Time.todMin  = m' } | m' <- shrink minute ] ++
-        [ tod { Time.todSec  = s' } | s' <- shrink second ]
+        [ tod { Time.todSec  = s' } | s' <- shrink sec    ]
 
 instance CoArbitrary Time.TimeOfDay where
-    coarbitrary (Time.TimeOfDay hour minute second) =
-        coarbitrary hour >< coarbitrary minute >< coarbitrary second
+    coarbitrary (Time.TimeOfDay hour minute sec) =
+        coarbitrary hour . coarbitrary minute . coarbitrary sec
 
 instance Arbitrary Time.LocalTime where
     arbitrary =
@@ -441,7 +446,7 @@ instance Arbitrary Time.LocalTime where
 
 instance CoArbitrary Time.LocalTime where
     coarbitrary (Time.LocalTime day tod) =
-        coarbitrary day >< coarbitrary tod
+        coarbitrary day . coarbitrary tod
 
 instance Arbitrary Time.ZonedTime where
     arbitrary =
@@ -454,7 +459,7 @@ instance Arbitrary Time.ZonedTime where
 
 instance CoArbitrary Time.ZonedTime where
     coarbitrary (Time.ZonedTime lt zone) =
-        coarbitrary lt >< coarbitrary zone
+        coarbitrary lt . coarbitrary zone
 
 instance Arbitrary Time.AbsoluteTime where
     arbitrary =
@@ -467,41 +472,9 @@ instance Arbitrary Time.AbsoluteTime where
 instance CoArbitrary Time.AbsoluteTime where
     coarbitrary = coarbitrary . flip Time.diffAbsoluteTime Time.taiEpoch
 
--- Introduced in QC 2.5.0
-#if !(MIN_VERSION_QuickCheck(2,5,0))
-instance Arbitrary Ordering where
-    arbitrary = arbitraryBoundedEnum
-    shrink GT = [EQ, LT]
-    shrink LT = [EQ]
-    shrink EQ = []
-
-instance CoArbitrary Ordering where
-    coarbitrary GT = variant (1 :: Integer)
-    coarbitrary EQ = variant (0 :: Integer)
-    coarbitrary LT = variant (-1 :: Integer)
-
-instance Fixed.HasResolution a => Arbitrary (Fixed.Fixed a) where
-    arbitrary = arbitrarySizedFractional
-    shrink    = shrinkRealFrac
-
-instance Fixed.HasResolution a => CoArbitrary (Fixed.Fixed a) where
-    coarbitrary = coarbitraryReal
-
-arbitraryBoundedEnum :: (Bounded a, Enum a) => Gen a
-arbitraryBoundedEnum =
-  do let mn = minBound
-         mx = maxBound `asTypeOf` mn
-     n <- choose (fromEnum mn, fromEnum mx)
-     return (toEnum n `asTypeOf` mn)
-
-coarbitraryEnum :: Enum a => a -> Gen c -> Gen c
-coarbitraryEnum = variant . fromEnum
-#endif
-
-#if !(MIN_VERSION_QuickCheck(2,8,0))
-instance (Function a, Integral a) => Function (Ratio a) where
-    function = functionMap (numerator &&& denominator) (uncurry (%))
-#endif
+-------------------------------------------------------------------------------
+-- case-insensitive
+-------------------------------------------------------------------------------
 
 instance (CI.FoldCase a, Arbitrary a) => Arbitrary (CI.CI a) where
     arbitrary = CI.mk <$> arbitrary
@@ -513,10 +486,21 @@ instance CoArbitrary a => CoArbitrary (CI.CI a) where
 instance (CI.FoldCase a, Function a) => Function (CI.CI a) where
     function = functionMap CI.mk CI.original
 
--- Tagged
+-------------------------------------------------------------------------------
+-- tagged
+-------------------------------------------------------------------------------
+
+instance Arbitrary2 Tagged.Tagged where
+    liftArbitrary2 _ arb = Tagged.Tagged <$> arb
+    liftShrink2 _ shr = fmap Tagged.Tagged . shr . Tagged.unTagged
+
+instance Arbitrary1 (Tagged.Tagged a) where
+    liftArbitrary arb = Tagged.Tagged <$> arb
+    liftShrink shr = fmap Tagged.Tagged . shr . Tagged.unTagged
+
 instance Arbitrary b => Arbitrary (Tagged.Tagged a b) where
-    arbitrary = Tagged.Tagged <$> arbitrary
-    shrink = fmap Tagged.Tagged . shrink . Tagged.unTagged
+    arbitrary = arbitrary1
+    shrink = shrink1
 
 instance CoArbitrary b => CoArbitrary (Tagged.Tagged a b) where
     coarbitrary = coarbitrary . Tagged.unTagged
@@ -524,7 +508,24 @@ instance CoArbitrary b => CoArbitrary (Tagged.Tagged a b) where
 instance Function b => Function (Tagged.Tagged a b) where
     function = functionMap Tagged.unTagged Tagged.Tagged
 
+
+instance Arbitrary1 Proxy where
+  liftArbitrary _ = pure Proxy
+  liftShrink _ _ = []
+
+instance Arbitrary (Proxy a) where
+  arbitrary = pure Proxy
+  shrink _  = []
+
+instance CoArbitrary (Proxy a) where
+  coarbitrary _ = id
+
+instance Function (Proxy a) where
+  function = functionMap (const ()) (const Proxy)
+
+-------------------------------------------------------------------------------
 -- uuid
+-------------------------------------------------------------------------------
 
 uuidFromWords :: (Word32, Word32, Word32, Word32) -> UUID.UUID
 uuidFromWords (a,b,c,d) = UUID.fromWords a b c d
@@ -539,3 +540,53 @@ instance CoArbitrary UUID.UUID where
 
 instance Function UUID.UUID where
     function = functionMap UUID.toWords uuidFromWords
+
+-------------------------------------------------------------------------------
+-- nats
+-------------------------------------------------------------------------------
+
+instance Arbitrary Natural where
+  arbitrary = arbitrarySizedNatural
+  shrink    = shrinkIntegral
+
+instance CoArbitrary Natural where
+  coarbitrary = coarbitraryIntegral
+
+instance Function Natural where
+  function = functionIntegral
+
+-------------------------------------------------------------------------------
+-- semigroups
+-------------------------------------------------------------------------------
+
+instance Arbitrary1 NonEmpty where
+  liftArbitrary arb = liftA2 (:|) arb (liftArbitrary arb)
+  liftShrink shr (x :| xs) = mapMaybe nonEmpty . liftShrink shr $ x : xs
+
+instance Arbitrary a => Arbitrary (NonEmpty a) where
+  arbitrary = arbitrary1
+  shrink = shrink1
+
+instance CoArbitrary a => CoArbitrary (NonEmpty a) where
+  coarbitrary (x :| xs) = coarbitrary (x, xs)
+
+instance Function a => Function (NonEmpty a) where
+  function = functionMap g h
+   where
+     g (x :| xs) = (x,   xs)
+     h (x,   xs) =  x :| xs
+
+-------------------------------------------------------------------------------
+-- transformers
+-------------------------------------------------------------------------------
+
+-- TODO: CoArbitrary and Function, needs Coarbitrary1 and Function1
+
+instance (Arbitrary1 f, Arbitrary1 g) => Arbitrary1 (Sum f g) where
+  liftArbitrary arb = oneof [fmap InL (liftArbitrary arb), fmap InR (liftArbitrary arb)]
+  liftShrink shr (InL f) = map InL (liftShrink shr f)
+  liftShrink shr (InR g) = map InR (liftShrink shr g)
+
+instance (Arbitrary1 f, Arbitrary1 g, Arbitrary a) => Arbitrary (Sum f g a) where
+  arbitrary = arbitrary1
+  shrink = shrink1
