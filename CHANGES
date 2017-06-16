@@ -1,3 +1,7 @@
+0.3.16
+
+* Instances for `Semigroup` newtypes: `Min`, `Max`, `First`, `Last`, `Option` and `WrappedMonoid`.
+
 0.3.15
 
 * `QuickCheck-2.10` support.
