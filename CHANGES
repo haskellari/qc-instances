@@ -1,3 +1,8 @@
+0.3.15
+
+* `QuickCheck-2.10` support.
+* `Arbitrary1/2` instances.
+
 0.3.14
 
 * Fix `Tree` bug.
