@@ -259,7 +259,7 @@ instance Arbitrary1 Tree.Tree where
                 rest <- arbPartition $ k - first
                 return $ first : rest
 
-    liftShrink shr = go 
+    liftShrink shr = go
       where
         go (Tree.Node val forest) = forest ++
             [ Tree.Node e fs
@@ -352,7 +352,10 @@ instance CoArbitrary OldTime.CalendarTime where
 -------------------------------------------------------------------------------
 
 instance Arbitrary Time.Day where
-    arbitrary = Time.ModifiedJulianDay <$> (2000 +) <$> arbitrary
+    arbitrary = sized $ \n -> do
+      let limit = (toInteger n)*365
+      offset <- choose (-limit, limit)
+      return $ Time.addDays offset (Time.fromGregorian 2000 1 1)
     shrink    = (Time.ModifiedJulianDay <$>) . shrink . Time.toModifiedJulianDay
 
 instance CoArbitrary Time.Day where
@@ -362,7 +365,10 @@ instance Function Time.Day where
     function = functionMap Time.toModifiedJulianDay Time.ModifiedJulianDay
 
 instance Arbitrary Time.UniversalTime where
-    arbitrary = Time.ModJulianDate <$> (2000 +) <$> arbitrary
+    arbitrary = sized $ \n -> do
+      let limit = (fromIntegral n)*365.25 :: Double
+      offset <- toRational <$> choose (-limit, limit)
+      return $ Time.ModJulianDate $ toRational (Time.toModifiedJulianDay (Time.fromGregorian 2000 1 1)) + offset
     shrink    = (Time.ModJulianDate <$>) . shrink . Time.getModJulianDate
 
 instance CoArbitrary Time.UniversalTime where
