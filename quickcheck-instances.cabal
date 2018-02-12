@@ -42,6 +42,22 @@ Source-repository head
 
 Library
   Exposed-modules:     Test.QuickCheck.Instances
+                       Test.QuickCheck.Instances.Array
+                       Test.QuickCheck.Instances.ByteString
+                       Test.QuickCheck.Instances.CaseInsensitive
+                       Test.QuickCheck.Instances.Containers
+                       Test.QuickCheck.Instances.Hashable
+                       Test.QuickCheck.Instances.Natural
+                       Test.QuickCheck.Instances.OldTime
+                       Test.QuickCheck.Instances.Scientific
+                       Test.QuickCheck.Instances.Semigroup
+                       Test.QuickCheck.Instances.Tagged
+                       Test.QuickCheck.Instances.Text
+                       Test.QuickCheck.Instances.Time
+                       Test.QuickCheck.Instances.Transformer
+                       Test.QuickCheck.Instances.UUID
+                       Test.QuickCheck.Instances.UnorderedContainers
+                       Test.QuickCheck.Instances.Vector
   Hs-Source-Dirs:      src
   Build-depends:
     base       >=4.5  && <4.11,
