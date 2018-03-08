@@ -1,3 +1,11 @@
+0.3.17
+
+* Support GHC-8.4.1
+* Split package into per-package modules
+* Add instances for `ShortByteString`
+* Add Function `ByteString` and `ShortByteString` instances (bytestring >= 0.10.4)
+* Enable PolyKinds for `Tagged` instances (GHC >= 7.6)
+
 0.3.16.1
 
 * Support QuickCheck-2.11
