@@ -1,3 +1,7 @@
+0.3.19
+
+* Instances for `MaybeT`
+
 0.3.18
 
 * `ShortByteString` instances for all supported `bytestring`
