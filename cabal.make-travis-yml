@@ -6,6 +6,9 @@ constraint-set QuickCheck-2.10
 constraint-set QuickCheck-2.11
   constraints: QuickCheck==2.11.*
 
+constraint-set QuickCheck-2.12
+  constraints: QuickCheck==2.12.*
+
 constraint-set lower-bounds-7.4.2
   ghc: ==7.4.2
   constraints:
