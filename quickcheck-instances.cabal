@@ -1,6 +1,5 @@
 Name:                quickcheck-instances
-Version:             0.3.18
-x-revision:          2
+Version:             0.3.19
 
 Synopsis:            Common quickcheck instances
 Description:         QuickCheck instances.
