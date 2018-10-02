@@ -17,12 +17,14 @@ import qualified Data.Tree as Tree
 -------------------------------------------------------------------------------
 
 instance Arbitrary1 Tree.Tree where
-    liftArbitrary arb = go
+    liftArbitrary arb = sized $ \n -> do
+        k <- choose (0, n)
+        go k
       where
-        go = sized $ \n -> do -- Sized is the size of the trees.
+        go n = do -- n is the size of the trees.
             value <- arb
             pars <- arbPartition (n - 1) -- can go negative!
-            forest <- for pars $ \i -> resize i go
+            forest <- for pars $ \i -> go i
             return $ Tree.Node value forest
 
         arbPartition :: Int -> Gen [Int]
