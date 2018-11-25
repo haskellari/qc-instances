@@ -5,7 +5,12 @@ module Test.QuickCheck.Instances.ByteString () where
 import Prelude ()
 import Prelude.Compat
 
+import Data.Word (Word8)
 import Test.QuickCheck
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Random (QCGen (..))
+
+import qualified System.Random.TF.Gen as TF
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
@@ -16,7 +21,15 @@ import qualified Data.ByteString.Short as SBS
 -------------------------------------------------------------------------------
 
 instance Arbitrary BS.ByteString where
-    arbitrary = BS.pack <$> arbitrary
+    arbitrary = MkGen $ \(QCGen qcGen) size ->
+        let size' = size
+        in fst (BS.unfoldrN size' gen qcGen)
+      where
+          gen :: TF.TFGen -> Maybe (Word8, TF.TFGen)
+          gen g =
+              let (w32, g') = TF.next g
+              in Just (fromIntegral w32, g')
+
     shrink xs = BS.pack <$> shrink (BS.unpack xs)
 
 instance CoArbitrary BS.ByteString where
