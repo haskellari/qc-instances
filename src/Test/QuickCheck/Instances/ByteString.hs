@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.ByteString () where
@@ -5,7 +6,12 @@ module Test.QuickCheck.Instances.ByteString () where
 import Prelude ()
 import Prelude.Compat
 
+import Data.Word (Word8)
 import Test.QuickCheck
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Random (QCGen (..))
+
+import qualified System.Random.SplitMix as SM
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
@@ -16,7 +22,19 @@ import qualified Data.ByteString.Short as SBS
 -------------------------------------------------------------------------------
 
 instance Arbitrary BS.ByteString where
-    arbitrary = BS.pack <$> arbitrary
+    arbitrary = MkGen $ \(QCGen g0) size ->
+        if size <= 0
+        then BS.empty
+        else
+            let (i, g1) = SM.nextInt g0
+                size' = i `mod` size
+            in fst (BS.unfoldrN size' gen g1)
+      where
+        gen :: SM.SMGen -> Maybe (Word8, SM.SMGen)
+        gen !g = Just (fromIntegral w64, g')
+          where
+            ~(w64, g') = SM.nextWord64 g
+
     shrink xs = BS.pack <$> shrink (BS.unpack xs)
 
 instance CoArbitrary BS.ByteString where
@@ -27,7 +45,21 @@ instance Function BS.ByteString where
 
 
 instance Arbitrary BL.ByteString where
-    arbitrary = BL.pack <$> arbitrary
+    arbitrary = MkGen $ \(QCGen g0) size ->
+        if size <= 0
+        then BL.empty
+        else
+            let (i, g1) = SM.nextInt g0
+                size' = i `mod` size
+            in BL.unfoldr gen (size', g1)
+      where
+        gen :: (Int, SM.SMGen) -> Maybe (Word8, (Int, SM.SMGen))
+        gen (!i, !g)
+            | i <= 0    = Nothing
+            | otherwise = Just (fromIntegral w64, (i - 1, g'))
+          where
+            ~(w64, g') = SM.nextWord64 g
+
     shrink xs = BL.pack <$> shrink (BL.unpack xs)
 
 instance CoArbitrary BL.ByteString where
