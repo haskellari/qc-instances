@@ -6,7 +6,7 @@ constraint-set QuickCheck-2.13
 constraint-set lower-bounds-7.4.2
   ghc: ==7.4.2
   constraints:
-    QuickCheck             ==2.13,
+    QuickCheck             ==2.13.2,
     array                  ==0.4.0.0,
     base                   ==4.5.1.0,
     base-compat            ==0.9.3,
