@@ -1,3 +1,8 @@
+0.3.21
+
+* Use time-compat
+* Add `Function` instances for vector, unordered-containers, scientific, nats
+
 0.3.20
 
 * Support QuickCheck-2.13

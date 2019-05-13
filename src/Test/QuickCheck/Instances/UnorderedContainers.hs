@@ -24,6 +24,9 @@ instance (Hashable a, Eq a, Arbitrary a) => Arbitrary (HS.HashSet a) where
 instance CoArbitrary a => CoArbitrary (HS.HashSet a) where
     coarbitrary = coarbitrary . HS.toList
 
+instance (Hashable a, Eq a, Function a) => Function (HS.HashSet a) where
+    function = functionMap HS.toList HS.fromList
+
 instance (Hashable k, Eq k, Arbitrary k) => Arbitrary1 (HML.HashMap k) where
     liftArbitrary arb =
         HML.fromList <$> liftArbitrary (liftArbitrary2 arbitrary arb)
@@ -36,3 +39,6 @@ instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (HML.HashMap 
 
 instance (CoArbitrary k, CoArbitrary v) => CoArbitrary (HML.HashMap k v) where
     coarbitrary = coarbitrary . HML.toList
+
+instance (Hashable k, Eq k, Function k, Function v) => Function (HML.HashMap k v) where
+    function = functionMap HML.toList HML.fromList
