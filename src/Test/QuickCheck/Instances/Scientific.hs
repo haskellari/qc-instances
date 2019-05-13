@@ -24,3 +24,8 @@ instance Arbitrary Scientific.Scientific where
 
 instance CoArbitrary Scientific.Scientific where
     coarbitrary s = coarbitrary (Scientific.coefficient s, Scientific.base10Exponent s)
+
+instance Function Scientific.Scientific where
+    function = functionMap
+        (\s -> (Scientific.coefficient s, Scientific.base10Exponent s))
+        (uncurry Scientific.scientific)

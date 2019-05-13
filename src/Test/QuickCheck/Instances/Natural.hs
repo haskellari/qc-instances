@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Natural () where
@@ -8,7 +8,9 @@ import Prelude ()
 import Numeric.Natural (Natural)
 
 import Test.QuickCheck
-import Test.QuickCheck.Function (functionIntegral)
+       (Arbitrary (..), CoArbitrary (..), arbitrarySizedNatural,
+       coarbitraryIntegral, shrinkIntegral)
+import Test.QuickCheck.Function (Function (..), functionIntegral)
 
 -------------------------------------------------------------------------------
 -- nats

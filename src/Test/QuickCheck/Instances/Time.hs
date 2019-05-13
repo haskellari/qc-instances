@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Time () where
@@ -8,8 +8,11 @@ import Prelude.Compat
 
 import Test.QuickCheck
 
-import qualified Data.Time as Time
-import qualified Data.Time.Clock.TAI as Time
+import qualified Data.Time.Calendar.Compat     as Time
+import qualified Data.Time.Clock.Compat        as Time
+import qualified Data.Time.Clock.System.Compat as Time
+import qualified Data.Time.Clock.TAI.Compat    as Time
+import qualified Data.Time.LocalTime.Compat    as Time
 
 -------------------------------------------------------------------------------
 -- time
@@ -69,6 +72,9 @@ instance Arbitrary Time.NominalDiffTime where
 
 instance CoArbitrary Time.NominalDiffTime where
     coarbitrary = coarbitraryReal
+
+instance Function Time.NominalDiffTime where
+    function = functionMap toRational fromRational
 
 instance Arbitrary Time.TimeZone where
     arbitrary =
@@ -136,3 +142,47 @@ instance Arbitrary Time.AbsoluteTime where
 
 instance CoArbitrary Time.AbsoluteTime where
     coarbitrary = coarbitrary . flip Time.diffAbsoluteTime Time.taiEpoch
+
+instance Arbitrary Time.DayOfWeek where
+    arbitrary = elements [Time.Monday .. Time.Sunday]
+
+instance CoArbitrary Time.DayOfWeek where
+    coarbitrary = coarbitrary . fromEnum
+
+instance Function Time.DayOfWeek where
+    function = functionMap fromEnum toEnum
+
+instance Arbitrary Time.SystemTime where
+    arbitrary = Time.MkSystemTime <$> arbitrary <*> nano where
+        -- generate 0 often.
+        nano = frequency
+            [ (1, pure 0)
+            , (15, choose (0, 999999999))
+            ]
+    shrink (Time.MkSystemTime s n) = map (uncurry Time.MkSystemTime) (shrink (s, n))
+instance CoArbitrary Time.SystemTime where
+    coarbitrary (Time.MkSystemTime s n) = coarbitrary (s, n)
+instance Function Time.SystemTime where
+    function = functionMap
+        (\(Time.MkSystemTime s n) -> (s, n))
+        (uncurry Time.MkSystemTime)
+
+instance Arbitrary Time.CalendarDiffDays where
+    arbitrary = Time.CalendarDiffDays <$> arbitrary <*> arbitrary
+    shrink (Time.CalendarDiffDays m d) = map (uncurry Time.CalendarDiffDays) (shrink (m, d))
+instance CoArbitrary Time.CalendarDiffDays where
+    coarbitrary (Time.CalendarDiffDays m d) = coarbitrary (m, d)
+instance Function Time.CalendarDiffDays where
+    function = functionMap
+        (\(Time.CalendarDiffDays m d) -> (m, d))
+        (uncurry Time.CalendarDiffDays)
+
+instance Arbitrary Time.CalendarDiffTime where
+    arbitrary = Time.CalendarDiffTime <$> arbitrary <*> arbitrary
+    shrink (Time.CalendarDiffTime m d) = map (uncurry Time.CalendarDiffTime) (shrink (m, d))
+instance CoArbitrary Time.CalendarDiffTime where
+    coarbitrary (Time.CalendarDiffTime m nt) = coarbitrary (m, nt)
+instance Function Time.CalendarDiffTime where
+    function = functionMap
+        (\(Time.CalendarDiffTime m nt) -> (m, nt))
+        (uncurry Time.CalendarDiffTime)

@@ -17,7 +17,7 @@ constraint-set lower-bounds-7.4.2
     nats                   ==1,
     old-time               ==1.1.0.0,
     scientific             ==0.2.0.0,
-    semigroups             ==0.18,
+    semigroups             ==0.18.5,
     tagged                 ==0.8.5,
     text                   ==1.0.0.0,
     time                   ==1.4,
