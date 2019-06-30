@@ -4,7 +4,7 @@
 #
 # For more information, see https://github.com/haskell-CI/haskell-ci
 #
-# version: 0.3.20190429
+# version: 0.3.20190624
 #
 language: c
 dist: xenial
@@ -90,6 +90,7 @@ install:
   - |
     echo "verbose: normal +nowrap +markoutput"          >> $CABALHOME/config
     echo "remote-build-reporting: anonymous"            >> $CABALHOME/config
+    echo "write-ghc-environment-files: always"          >> $CABALHOME/config
     echo "remote-repo-cache: $CABALHOME/packages"       >> $CABALHOME/config
     echo "logs-dir:          $CABALHOME/logs"           >> $CABALHOME/config
     echo "world-file:        $CABALHOME/world"          >> $CABALHOME/config
@@ -105,7 +106,6 @@ install:
   - |
     if $GHCHEAD; then
     echo "allow-newer: $($HCPKG list --simple-output | sed -E 's/([a-zA-Z-]+)-[0-9.]+/*:\1/g')" >> $CABALHOME/config
-    
     echo "repository head.hackage"                                                        >> $CABALHOME/config
     echo "   url: http://head.hackage.haskell.org/"                                       >> $CABALHOME/config
     echo "   secure: True"                                                                >> $CABALHOME/config
@@ -123,7 +123,6 @@ install:
   - |
     echo 'packages: "."' >> cabal.project
   - |
-    echo "write-ghc-environment-files: always" >> cabal.project
   - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(quickcheck-instances)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
@@ -147,7 +146,6 @@ script:
   - |
     echo 'packages: "quickcheck-instances-*/*.cabal"' >> cabal.project
   - |
-    echo "write-ghc-environment-files: always" >> cabal.project
   - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(quickcheck-instances)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
@@ -171,7 +169,7 @@ script:
   # Constraint set QuickCheck-2.13
   - ${CABAL} v2-build -w ${HC} --disable-tests --disable-benchmarks --constraint='QuickCheck==2.13.*' all | color_cabal_output
   # Constraint set lower-bounds-7.4.2
-  - if [ $HCNUMVER -eq 70402 ] ; then ${CABAL} v2-build -w ${HC} --disable-tests --disable-benchmarks --constraint='QuickCheck             ==2.13' --constraint='array                  ==0.4.0.0' --constraint='base                   ==4.5.1.0' --constraint='base-compat            ==0.9.3' --constraint='bytestring             ==0.9.2.1' --constraint='case-insensitive       ==1.2.0.4' --constraint='containers             ==0.4.2.1' --constraint='hashable               ==1.2.5.0' --constraint='nats                   ==1' --constraint='old-time               ==1.1.0.0' --constraint='scientific             ==0.2.0.0' --constraint='semigroups             ==0.18.5' --constraint='tagged                 ==0.8.5' --constraint='text                   ==1.0.0.0' --constraint='time                   ==1.4' --constraint='transformers           ==0.3.0.0' --constraint='transformers-compat    ==0.5.1.*' --constraint='unordered-containers   ==0.2.2.0' --constraint='uuid-types             ==1.0.3' --constraint='vector                 ==0.9' all | color_cabal_output ; fi
+  - if [ $HCNUMVER -eq 70402 ] ; then ${CABAL} v2-build -w ${HC} --disable-tests --disable-benchmarks --constraint='QuickCheck             ==2.13.2' --constraint='array                  ==0.4.0.0' --constraint='base                   ==4.5.1.0' --constraint='base-compat            ==0.9.3' --constraint='bytestring             ==0.9.2.1' --constraint='case-insensitive       ==1.2.0.4' --constraint='containers             ==0.4.2.1' --constraint='hashable               ==1.2.5.0' --constraint='nats                   ==1' --constraint='old-time               ==1.1.0.0' --constraint='scientific             ==0.2.0.0' --constraint='semigroups             ==0.18.5' --constraint='tagged                 ==0.8.5' --constraint='text                   ==1.0.0.0' --constraint='time                   ==1.4' --constraint='transformers           ==0.3.0.0' --constraint='transformers-compat    ==0.5.1.*' --constraint='unordered-containers   ==0.2.2.0' --constraint='uuid-types             ==1.0.3' --constraint='vector                 ==0.9' all | color_cabal_output ; fi
 
 # REGENDATA ["--config=cabal.haskell-ci","--output=.travis.yml","quickcheck-instances.cabal"]
 # EOF

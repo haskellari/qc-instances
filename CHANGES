@@ -1,3 +1,7 @@
+0.3.22
+
+* Add `Void` instances.
+
 0.3.21
 
 * Use time-compat
