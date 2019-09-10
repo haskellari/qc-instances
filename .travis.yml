@@ -4,11 +4,10 @@
 #
 # For more information, see https://github.com/haskell-CI/haskell-ci
 #
-# version: 0.3.20190804.2
+# version: 0.5.20190908
 #
 language: c
 dist: xenial
-sudo: required
 git:
   # whether to recursively clone submodules
   submodules: false
@@ -33,24 +32,25 @@ matrix:
     - compiler: ghc-8.8.1
       addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.8.1","cabal-install-3.0"]}}
     - compiler: ghc-8.6.5
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.6.5","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.6.5","cabal-install-3.0"]}}
     - compiler: ghc-8.4.4
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.4.4","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.4.4","cabal-install-3.0"]}}
     - compiler: ghc-8.2.2
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.2.2","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.2.2","cabal-install-3.0"]}}
     - compiler: ghc-8.0.2
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.0.2","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.0.2","cabal-install-3.0"]}}
     - compiler: ghc-7.10.3
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.10.3","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.10.3","cabal-install-3.0"]}}
     - compiler: ghc-7.8.4
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.8.4","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.8.4","cabal-install-3.0"]}}
     - compiler: ghc-7.6.3
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.6.3","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.6.3","cabal-install-3.0"]}}
     - compiler: ghc-7.4.2
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.4.2","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-7.4.2","cabal-install-3.0"]}}
 before_install:
   - HC=$(echo "/opt/$CC/bin/ghc" | sed 's/-/\//')
   - WITHCOMPILER="-w $HC"
+  - HADDOCK=$(echo "/opt/$CC/bin/haddock" | sed 's/-/\//')
   - HCPKG="$HC-pkg"
   - unset CC
   - CABAL=/opt/ghc/bin/cabal
@@ -102,6 +102,9 @@ install:
     echo "  prefix: $CABALHOME"                         >> $CABALHOME/config
     echo "repository hackage.haskell.org"               >> $CABALHOME/config
     echo "  url: http://hackage.haskell.org/"           >> $CABALHOME/config
+  - |
+    echo "program-default-options"                >> $CABALHOME/config
+    echo "  ghc-options: $GHCJOBS +RTS -M6G -RTS" >> $CABALHOME/config
   - cat $CABALHOME/config
   - rm -fv cabal.project cabal.project.local cabal.project.freeze
   - travis_retry ${CABAL} v2-update -v
@@ -150,7 +153,7 @@ script:
   # cabal check...
   - (cd ${PKGDIR_quickcheck_instances} && ${CABAL} -vnormal check)
   # haddock...
-  - ${CABAL} v2-haddock $WITHCOMPILER ${TEST} ${BENCH} all | color_cabal_output
+  - ${CABAL} v2-haddock $WITHCOMPILER --with-haddock $HADDOCK ${TEST} ${BENCH} all | color_cabal_output
   # Building without installed constraints for packages in global-db...
   - rm -f cabal.project.local
   - ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks all | color_cabal_output
@@ -159,7 +162,7 @@ script:
   # Constraint set QuickCheck-2.13
   - ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks --constraint='QuickCheck==2.13.*' all | color_cabal_output
   # Constraint set lower-bounds-7.4.2
-  - if [ $HCNUMVER -ge 70400 ] && [ $HCNUMVER -lt 70600 ] ; then ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks --constraint='QuickCheck             ==2.13.2' --constraint='array                  ==0.4.0.0' --constraint='base                   ==4.5.1.0' --constraint='base-compat            ==0.9.3' --constraint='bytestring             ==0.9.2.1' --constraint='case-insensitive       ==1.2.0.4' --constraint='containers             ==0.4.2.1' --constraint='hashable               ==1.2.5.0' --constraint='nats                   ==1' --constraint='old-time               ==1.1.0.0' --constraint='scientific             ==0.2.0.0' --constraint='semigroups             ==0.18.5' --constraint='tagged                 ==0.8.5' --constraint='text                   ==1.0.0.0' --constraint='time                   ==1.4' --constraint='transformers           ==0.3.0.0' --constraint='transformers-compat    ==0.5.1.*' --constraint='unordered-containers   ==0.2.2.0' --constraint='uuid-types             ==1.0.3' --constraint='vector                 ==0.9' all | color_cabal_output ; fi
+  - if [ $HCNUMVER -lt 70600 ] ; then ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks --constraint='QuickCheck             ==2.13.2' --constraint='array                  ==0.4.0.0' --constraint='base                   ==4.5.1.0' --constraint='base-compat            ==0.9.3' --constraint='bytestring             ==0.9.2.1' --constraint='case-insensitive       ==1.2.0.4' --constraint='containers             ==0.4.2.1' --constraint='hashable               ==1.2.5.0' --constraint='nats                   ==1' --constraint='old-time               ==1.1.0.0' --constraint='scientific             ==0.2.0.0' --constraint='semigroups             ==0.18.5' --constraint='tagged                 ==0.8.5' --constraint='text                   ==1.0.0.0' --constraint='time                   ==1.4' --constraint='transformers           ==0.3.0.0' --constraint='transformers-compat    ==0.5.1.*' --constraint='unordered-containers   ==0.2.2.0' --constraint='uuid-types             ==1.0.3' --constraint='vector                 ==0.9' all | color_cabal_output ; fi
 
 # REGENDATA ["--config=cabal.haskell-ci","--output=.travis.yml","quickcheck-instances.cabal"]
 # EOF
