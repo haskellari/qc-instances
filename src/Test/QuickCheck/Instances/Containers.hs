@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Containers () where
@@ -34,7 +34,7 @@ instance Arbitrary1 Tree.Tree where
                 rest <- arbPartition $ k - first
                 return $ first : rest
 
-    liftShrink shr = go 
+    liftShrink shr = go
       where
         go (Tree.Node val forest) = forest ++
             [ Tree.Node e fs

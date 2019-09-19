@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Transformer () where
@@ -6,8 +6,8 @@ module Test.QuickCheck.Instances.Transformer () where
 import Prelude ()
 import Prelude.Compat
 
-import Control.Monad.Trans.Maybe (MaybeT(..))
-import Data.Functor.Sum (Sum (..))
+import Control.Monad.Trans.Maybe (MaybeT (..))
+import Data.Functor.Sum          (Sum (..))
 
 import Test.QuickCheck
 

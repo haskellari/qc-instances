@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Array () where
@@ -7,11 +7,11 @@ import Prelude ()
 import Prelude.Compat
 
 import Control.Applicative (liftA2)
-import Data.Ix (Ix (..))
+import Data.Ix             (Ix (..))
 
 import Test.QuickCheck
 
-import qualified Data.Array.IArray as Array
+import qualified Data.Array.IArray  as Array
 import qualified Data.Array.Unboxed as Array
 
 -------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeOperators    #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Vector () where
 
@@ -10,10 +10,10 @@ import Prelude.Compat
 import Test.QuickCheck
 import Test.QuickCheck.Function ((:->))
 
-import qualified Data.Vector as Vector
-import qualified Data.Vector.Generic as GVector
+import qualified Data.Vector          as Vector
+import qualified Data.Vector.Generic  as GVector
 import qualified Data.Vector.Storable as SVector
-import qualified Data.Vector.Unboxed as UVector
+import qualified Data.Vector.Unboxed  as UVector
 
 -------------------------------------------------------------------------------
 -- vector

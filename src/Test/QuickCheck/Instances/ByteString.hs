@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns     #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.ByteString () where
@@ -6,15 +6,15 @@ module Test.QuickCheck.Instances.ByteString () where
 import Prelude ()
 import Prelude.Compat
 
-import Data.Word (Word8)
+import Data.Word              (Word8)
 import Test.QuickCheck
 import Test.QuickCheck.Gen
 import Test.QuickCheck.Random (QCGen (..))
 
 import qualified System.Random.SplitMix as SM
 
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString       as BS
+import qualified Data.ByteString.Lazy  as LBS
 import qualified Data.ByteString.Short as SBS
 
 -------------------------------------------------------------------------------
@@ -44,14 +44,14 @@ instance Function BS.ByteString where
     function = functionMap BS.unpack BS.pack
 
 
-instance Arbitrary BL.ByteString where
+instance Arbitrary LBS.ByteString where
     arbitrary = MkGen $ \(QCGen g0) size ->
         if size <= 0
-        then BL.empty
+        then LBS.empty
         else
             let (i, g1) = SM.nextInt g0
                 size' = i `mod` size
-            in BL.unfoldr gen (size', g1)
+            in LBS.unfoldr gen (size', g1)
       where
         gen :: (Int, SM.SMGen) -> Maybe (Word8, (Int, SM.SMGen))
         gen (!i, !g)
@@ -60,13 +60,13 @@ instance Arbitrary BL.ByteString where
           where
             ~(w64, g') = SM.nextWord64 g
 
-    shrink xs = BL.pack <$> shrink (BL.unpack xs)
+    shrink xs = LBS.pack <$> shrink (LBS.unpack xs)
 
-instance CoArbitrary BL.ByteString where
-    coarbitrary = coarbitrary . BL.unpack
+instance CoArbitrary LBS.ByteString where
+    coarbitrary = coarbitrary . LBS.unpack
 
-instance Function BL.ByteString where
-    function = functionMap BL.unpack BL.pack
+instance Function LBS.ByteString where
+    function = functionMap LBS.unpack LBS.pack
 
 
 instance Arbitrary SBS.ShortByteString where

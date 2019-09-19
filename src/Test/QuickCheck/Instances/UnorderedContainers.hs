@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.UnorderedContainers () where
@@ -11,7 +11,7 @@ import Data.Hashable (Hashable)
 import Test.QuickCheck
 
 import qualified Data.HashMap.Lazy as HML
-import qualified Data.HashSet as HS
+import qualified Data.HashSet      as HS
 
 -------------------------------------------------------------------------------
 -- unordered-containers
