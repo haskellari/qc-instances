@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-|
@@ -35,15 +35,15 @@ import Test.QuickCheck.Instances.CaseInsensitive ()
 import Test.QuickCheck.Instances.Containers ()
 import Test.QuickCheck.Instances.Hashable ()
 import Test.QuickCheck.Instances.Natural ()
-import Test.QuickCheck.Instances.OldTime ()
 import Test.QuickCheck.Instances.Natural ()
+import Test.QuickCheck.Instances.OldTime ()
 import Test.QuickCheck.Instances.Scientific ()
 import Test.QuickCheck.Instances.Semigroup ()
 import Test.QuickCheck.Instances.Tagged ()
 import Test.QuickCheck.Instances.Text ()
 import Test.QuickCheck.Instances.Time ()
 import Test.QuickCheck.Instances.Transformer ()
-import Test.QuickCheck.Instances.UUID ()
 import Test.QuickCheck.Instances.UnorderedContainers ()
+import Test.QuickCheck.Instances.UUID ()
 import Test.QuickCheck.Instances.Vector ()
 import Test.QuickCheck.Instances.Void ()

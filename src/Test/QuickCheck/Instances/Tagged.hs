@@ -1,7 +1,7 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 #if __GLASGOW_HASKELL__ >= 706
-{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE PolyKinds        #-}
 #endif
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Tagged () where

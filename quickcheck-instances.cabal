@@ -1,7 +1,6 @@
 name:               quickcheck-instances
 version:            0.3.22
 x-revision:         2
-
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
@@ -109,7 +108,7 @@ library
 
   if flag(bytestring-builder)
     build-depends:
-        bytestring          <0.10.4.0
+        bytestring          >=0      && <0.10.4.0
       , bytestring-builder  >=0.10.4 && <0.11
 
   else

@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Semigroup () where
@@ -7,8 +7,8 @@ import Prelude ()
 import Prelude.Compat
 
 import Control.Applicative (liftA2)
-import Data.List.NonEmpty (NonEmpty (..), nonEmpty)
-import Data.Maybe (mapMaybe)
+import Data.List.NonEmpty  (NonEmpty (..), nonEmpty)
+import Data.Maybe          (mapMaybe)
 
 import Test.QuickCheck
 
