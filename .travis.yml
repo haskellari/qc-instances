@@ -114,7 +114,6 @@ install:
   - touch cabal.project
   - |
     echo "packages: ." >> cabal.project
-    echo "packages: https://oleg.fi/these-1.1.tar.gz" >> cabal.project
   - if [ $HCNUMVER -ge 80200 ] ; then echo 'package quickcheck-instances' >> cabal.project ; fi
   - "if [ $HCNUMVER -ge 80200 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
   - |
@@ -142,7 +141,6 @@ script:
   - touch cabal.project
   - |
     echo "packages: ${PKGDIR_quickcheck_instances}" >> cabal.project
-    echo "packages: https://oleg.fi/these-1.1.tar.gz" >> cabal.project
   - if [ $HCNUMVER -ge 80200 ] ; then echo 'package quickcheck-instances' >> cabal.project ; fi
   - "if [ $HCNUMVER -ge 80200 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
   - |
