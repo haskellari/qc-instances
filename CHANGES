@@ -1,6 +1,7 @@
 0.3.24
 
 * Add `strict` instances.
+* Add `data-fix` instances.
 
 0.3.23
 
