@@ -1,1 +1,7 @@
 packages: .
+
+source-repository-package
+  type: git
+  location: https://github.com/haskell-strict/strict.git
+  tag: ea71604cb772e677a2ba8a9854bb1d6855587a16
+  subdir: strict

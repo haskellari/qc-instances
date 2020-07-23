@@ -15,7 +15,7 @@ import Data.These         (These (..))
 -- These
 -------------------------------------------------------------------------------
 
--- | @since 0.7.4
+-- | @since 0.3.23
 instance Arbitrary2 These where
     liftArbitrary2 arbA arbB = oneof
         [ This <$> arbA
@@ -28,17 +28,17 @@ instance Arbitrary2 These where
     liftShrink2  shrA  shrB (These x y) =
         [This x, That y] ++ [These x' y' | (x', y') <- liftShrink2 shrA shrB (x, y)]
 
--- | @since 0.7.4
+-- | @since 0.3.23
 instance (Arbitrary a) => Arbitrary1 (These a) where
     liftArbitrary = liftArbitrary2 arbitrary
     liftShrink = liftShrink2 shrink
 
--- | @since 0.7.1
+-- | @since 0.3.23
 instance (Arbitrary a, Arbitrary b) => Arbitrary (These a b) where
     arbitrary = arbitrary1
     shrink = shrink1
 
--- | @since 0.7.1
+-- | @since 0.3.23
 instance (Function a, Function b) => Function (These a b) where
   function = functionMap g f
     where
@@ -50,13 +50,14 @@ instance (Function a, Function b) => Function (These a b) where
       f (Right (Left b))       = That b
       f (Right (Right (a, b))) = These a b
 
--- | @since 0.7.1
+-- | @since 0.3.23
 instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (These a b)
 
 -------------------------------------------------------------------------------
 -- These1
 -------------------------------------------------------------------------------
 
+-- | @since 0.3.23
 instance (Arbitrary1 f, Arbitrary1 g) => Arbitrary1 (These1 f g) where
     liftArbitrary arb = oneof
         [ This1 <$> liftArbitrary arb
@@ -72,6 +73,7 @@ instance (Arbitrary1 f, Arbitrary1 g) => Arbitrary1 (These1 f g) where
         | (x', y') <- liftShrink2 (liftShrink shr) (liftShrink shr) (x, y)
         ]
 
+-- | @since 0.3.23
 instance (Arbitrary1 f, Arbitrary1 g, Arbitrary a) => Arbitrary (These1 f g a) where
     arbitrary = arbitrary1
     shrink    = shrink1

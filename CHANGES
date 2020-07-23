@@ -1,3 +1,7 @@
+0.3.24
+
+* Add `strict` instances.
+
 0.3.23
 
 * Add `these` instances.
