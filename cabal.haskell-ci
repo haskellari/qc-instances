@@ -1,7 +1,7 @@
 branches: master
 
-constraint-set QuickCheck-2.13
-  constraints: QuickCheck==2.13.*
+-- constraint-set QuickCheck-2.13
+--   constraints: QuickCheck==2.13.*
 
 constraint-set lower-bounds-7.4.2
   ghc: ==7.4.2
