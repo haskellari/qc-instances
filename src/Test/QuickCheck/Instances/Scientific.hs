@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.Scientific () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Test.QuickCheck
 

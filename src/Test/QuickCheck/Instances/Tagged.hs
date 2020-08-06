@@ -7,7 +7,7 @@
 module Test.QuickCheck.Instances.Tagged () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Proxy (Proxy (Proxy))
 

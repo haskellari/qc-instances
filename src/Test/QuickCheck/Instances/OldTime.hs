@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.OldTime () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Int (Int32)
 

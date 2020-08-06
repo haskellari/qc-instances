@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.Hashable () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Hashable (Hashable, Hashed, hashed)
 

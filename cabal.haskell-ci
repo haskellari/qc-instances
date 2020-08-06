@@ -6,7 +6,7 @@ branches: master
 constraint-set lower-bounds-7.4.2
   ghc: ==7.4.2
   constraints:
-    QuickCheck             ==2.13.2,
+    QuickCheck             ==2.14.1,
     array                  ==0.4.0.0,
     base                   ==4.5.1.0,
     base-compat            ==0.10.5,

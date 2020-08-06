@@ -2,7 +2,7 @@
 module Test.QuickCheck.Instances.DataFix () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Fix        (Fix (..), Mu (..), Nu (..), unfoldMu, unfoldNu, foldMu, foldNu)
 import Test.QuickCheck (Arbitrary (..), Arbitrary1 (..), Gen, sized)

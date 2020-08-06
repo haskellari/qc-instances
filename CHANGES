@@ -4,6 +4,7 @@
 * Add `data-fix` instances.
 * Improve 'Arbitrary Tree' instance and add `Function Tree` instance.
 * Require `QuickCheck-2.14.1`
+* Drop `base-compat` dependency
 
 0.3.23
 

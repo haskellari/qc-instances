@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.UnorderedContainers () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Hashable (Hashable)
 

@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.Containers () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Test.QuickCheck
        (Arbitrary (..), Arbitrary1 (..), CoArbitrary (..), Function (..), Gen,
