@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.Transformer () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Control.Monad.Trans.Maybe (MaybeT (..))
 import Data.Functor.Sum          (Sum (..))

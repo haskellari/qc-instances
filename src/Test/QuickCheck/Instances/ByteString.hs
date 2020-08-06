@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.ByteString () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Word              (Word8)
 import Test.QuickCheck

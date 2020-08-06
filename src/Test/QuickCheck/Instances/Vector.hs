@@ -5,7 +5,7 @@
 module Test.QuickCheck.Instances.Vector () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Test.QuickCheck
 import Test.QuickCheck.Function ((:->))

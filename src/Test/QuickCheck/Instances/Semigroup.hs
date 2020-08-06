@@ -4,7 +4,7 @@
 module Test.QuickCheck.Instances.Semigroup () where
 
 import Prelude ()
-import Prelude.Compat
+import Test.QuickCheck.Instances.CustomPrelude
 
 import Control.Applicative (liftA2)
 import Data.List.NonEmpty  (NonEmpty (..), nonEmpty)
