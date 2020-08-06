@@ -2,6 +2,8 @@
 
 * Add `strict` instances.
 * Add `data-fix` instances.
+* Improve 'Arbitrary Tree' instance and add `Function Tree` instance.
+* Require `QuickCheck-2.14.1`
 
 0.3.23
 

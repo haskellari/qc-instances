@@ -6,9 +6,10 @@ module Test.QuickCheck.Instances.Containers () where
 import Prelude ()
 import Prelude.Compat
 
-import Data.Traversable (for)
-
 import Test.QuickCheck
+       (Arbitrary (..), Arbitrary1 (..), CoArbitrary (..), Function (..), Gen,
+       arbitrary1, chooseInt, functionMap, liftShrink2, shrink1, shuffle,
+       sized)
 
 import qualified Data.Tree as Tree
 
@@ -17,12 +18,14 @@ import qualified Data.Tree as Tree
 -------------------------------------------------------------------------------
 
 instance Arbitrary1 Tree.Tree where
-    liftArbitrary arb = go
+    liftArbitrary arb = sized $ \n -> do
+        k <- chooseInt (0, n)
+        go k
       where
-        go = sized $ \n -> do -- Sized is the size of the trees.
+        go n = do -- n is the size of the trees.
             value <- arb
             pars <- arbPartition (n - 1) -- can go negative!
-            forest <- for pars $ \i -> resize i go
+            forest <- traverse go pars
             return $ Tree.Node value forest
 
         arbPartition :: Int -> Gen [Int]
@@ -30,9 +33,9 @@ instance Arbitrary1 Tree.Tree where
             LT -> pure []
             EQ -> pure [1]
             GT -> do
-                first <- elements [1..k]
+                first <- chooseInt (1, k)
                 rest <- arbPartition $ k - first
-                return $ first : rest
+                shuffle (first : rest)
 
     liftShrink shr = go
       where
@@ -48,3 +51,6 @@ instance Arbitrary a => Arbitrary (Tree.Tree a) where
 instance CoArbitrary a => CoArbitrary (Tree.Tree a) where
     coarbitrary (Tree.Node val forest) =
         coarbitrary val . coarbitrary forest
+
+instance Function a => Function (Tree.Tree a) where
+    function = functionMap (\(Tree.Node x xs) -> (x,xs)) (uncurry Tree.Node)
