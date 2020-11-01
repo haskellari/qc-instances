@@ -8,11 +8,13 @@ import Test.QuickCheck.Instances.CustomPrelude
 
 import Test.QuickCheck
 
-import qualified Data.Time.Calendar.Compat     as Time
-import qualified Data.Time.Clock.Compat        as Time
-import qualified Data.Time.Clock.System.Compat as Time
-import qualified Data.Time.Clock.TAI.Compat    as Time
-import qualified Data.Time.LocalTime.Compat    as Time
+import qualified Data.Time.Calendar.Compat         as Time
+import qualified Data.Time.Calendar.Month.Compat   as Time
+import qualified Data.Time.Calendar.Quarter.Compat as Time
+import qualified Data.Time.Clock.Compat            as Time
+import qualified Data.Time.Clock.System.Compat     as Time
+import qualified Data.Time.Clock.TAI.Compat        as Time
+import qualified Data.Time.LocalTime.Compat        as Time
 
 -------------------------------------------------------------------------------
 -- time
@@ -145,10 +147,8 @@ instance CoArbitrary Time.AbsoluteTime where
 
 instance Arbitrary Time.DayOfWeek where
     arbitrary = elements [Time.Monday .. Time.Sunday]
-
 instance CoArbitrary Time.DayOfWeek where
     coarbitrary = coarbitrary . fromEnum
-
 instance Function Time.DayOfWeek where
     function = functionMap fromEnum toEnum
 
@@ -186,3 +186,42 @@ instance Function Time.CalendarDiffTime where
     function = functionMap
         (\(Time.CalendarDiffTime m nt) -> (m, nt))
         (uncurry Time.CalendarDiffTime)
+
+instance Arbitrary Time.Month where
+    arbitrary = do
+        y <- arbitrary
+        m <- chooseInt (1,12)
+        return (Time.fromYearMonth (y + 2000) m)
+    shrink mm = case Time.toYearMonth mm of
+        (y, m) -> do
+            (y', m') <- shrink (y - 2000, m)
+            return (Time.fromYearMonth (y' + 2000) m')
+instance CoArbitrary Time.Month where
+    coarbitrary (Time.MkMonth m) = coarbitrary m
+instance Function Time.Month where
+    function = functionMap
+        (\(Time.MkMonth m) -> m)
+        Time.MkMonth
+
+instance Arbitrary Time.QuarterOfYear where
+    arbitrary = elements [ Time.Q1 .. Time.Q2 ]
+instance CoArbitrary Time.QuarterOfYear where
+    coarbitrary = coarbitrary . fromEnum
+instance Function Time.QuarterOfYear where
+    function = functionBoundedEnum
+
+instance Arbitrary Time.Quarter where
+    arbitrary = do
+        y <- arbitrary
+        q <- arbitrary
+        return (Time.fromYearQuarter (y + 2000) q)
+    shrink qq = case Time.toYearQuarter qq of
+        (y, q) -> do
+            (y', q') <- shrink (y - 2000, q)
+            return (Time.fromYearQuarter (y' + 2000) q')
+instance CoArbitrary Time.Quarter where
+    coarbitrary (Time.MkQuarter x) = coarbitrary x
+instance Function Time.Quarter where
+    function = functionMap
+        (\(Time.MkQuarter x) -> x)
+        Time.MkQuarter
