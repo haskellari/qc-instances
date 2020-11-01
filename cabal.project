@@ -1,1 +1,2 @@
 packages: .
+packages: https://hackage.haskell.org/package/time-compat-1.9.4/candidate/time-compat-1.9.4.tar.gz
