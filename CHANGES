@@ -1,6 +1,6 @@
 0.3.25
 
-* Add types from `time-1.11` / `time-compat-1.9.4`
+* Add types from `time-1.11` / `time-compat-1.9.4`: `Month`, `Quarter`, `QuarterOfYear`
 
 0.3.24
 
