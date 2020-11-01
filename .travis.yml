@@ -117,8 +117,6 @@ install:
   - if [ $HCNUMVER -ge 80200 ] ; then echo 'package quickcheck-instances' >> cabal.project ; fi
   - "if [ $HCNUMVER -ge 80200 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
   - |
-    echo "packages:"                                                                                  >> cabal.project
-    echo "  https://hackage.haskell.org/package/time-compat-1.9.4/candidate/time-compat-1.9.4.tar.gz" >> cabal.project
   - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(quickcheck-instances)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
@@ -146,8 +144,6 @@ script:
   - if [ $HCNUMVER -ge 80200 ] ; then echo 'package quickcheck-instances' >> cabal.project ; fi
   - "if [ $HCNUMVER -ge 80200 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
   - |
-    echo "packages:"                                                                                  >> cabal.project
-    echo "  https://hackage.haskell.org/package/time-compat-1.9.4/candidate/time-compat-1.9.4.tar.gz" >> cabal.project
   - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(quickcheck-instances)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
