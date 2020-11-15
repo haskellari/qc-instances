@@ -3,6 +3,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Containers () where
 
+#if !MIN_VERSION_QuickCheck(2,14,2)
 import Prelude ()
 import Test.QuickCheck.Instances.CustomPrelude
 
@@ -54,3 +55,4 @@ instance CoArbitrary a => CoArbitrary (Tree.Tree a) where
 
 instance Function a => Function (Tree.Tree a) where
     function = functionMap (\(Tree.Node x xs) -> (x,xs)) (uncurry Tree.Node)
+#endif
