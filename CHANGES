@@ -1,3 +1,8 @@
+0.3.25.1
+
+* Support `QuickCheck-2.14.2`
+* Support `bytestring-0.11`
+
 0.3.25
 
 * Add types from `time-1.11` / `time-compat-1.9.4`: `Month`, `Quarter`, `QuarterOfYear`
