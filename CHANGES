@@ -1,3 +1,7 @@
+0.3.24.2
+
+* Fix bug in QuarterOfYear instance
+
 0.3.25.1
 
 * Support `QuickCheck-2.14.2`
