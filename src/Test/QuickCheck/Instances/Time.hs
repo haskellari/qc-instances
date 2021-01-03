@@ -204,7 +204,7 @@ instance Function Time.Month where
         Time.MkMonth
 
 instance Arbitrary Time.QuarterOfYear where
-    arbitrary = elements [ Time.Q1 .. Time.Q2 ]
+    arbitrary = elements [ Time.Q1 .. Time.Q4 ]
 instance CoArbitrary Time.QuarterOfYear where
     coarbitrary = coarbitrary . fromEnum
 instance Function Time.QuarterOfYear where
