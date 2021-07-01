@@ -42,6 +42,8 @@ tested-with:
    || ==8.8.4
    || ==8.10.4
    || ==9.0.1
+   || ==9.2.0.20210422
+   -- TODO: replace with || ==9.2.?
 
 source-repository head
   type:     git
@@ -80,7 +82,7 @@ library
   other-modules:    Test.QuickCheck.Instances.CustomPrelude
   hs-source-dirs:   src
   build-depends:
-      base        >=4.5    && <4.16
+      base        >=4.5    && <4.17
     , QuickCheck  >=2.14.1 && <2.14.3
     , splitmix    >=0.0.2  && <0.2
 
@@ -103,7 +105,7 @@ library
     , transformers-compat   >=0.6.5   && <0.7
     , unordered-containers  >=0.2.2.0 && <0.3
     , uuid-types            >=1.0.3   && <1.1
-    , vector                >=0.9     && <0.13
+    , vector                >=0.9     && <0.14
 
   -- version is irrelevant.
   build-depends:    time
