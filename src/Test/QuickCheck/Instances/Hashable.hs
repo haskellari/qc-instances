@@ -6,7 +6,7 @@ module Test.QuickCheck.Instances.Hashable () where
 import Prelude ()
 import Test.QuickCheck.Instances.CustomPrelude
 
-import Data.Hashable (Hashable, Hashed, hashed)
+import Data.Hashable (Hashable, Hashed, hash, hashed)
 
 import Test.QuickCheck
 
@@ -19,5 +19,5 @@ instance (Hashable a, Arbitrary a) => Arbitrary (Hashed a) where
     arbitrary = hashed <$> arbitrary
 
 instance CoArbitrary (Hashed a) where
-    coarbitrary x = coarbitrary (hashed x)
+    coarbitrary x = coarbitrary (hash x :: Int)
 #endif

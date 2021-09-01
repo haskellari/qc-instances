@@ -1,3 +1,7 @@
+0.3.26
+
+* Fix bug in `CoArbitrary (Hashed a)` instance
+
 0.3.25.2
 
 * Fix bug in QuarterOfYear instance
