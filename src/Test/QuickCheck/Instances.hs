@@ -12,13 +12,25 @@ Instances are provided for the types in the packages:
 
  * containers
 
+ * data-fix
+
  * old-time
 
+ * strict
+
  * text
+
+ * text-short
+
+ * these
 
  * time
 
  * unordered-containers
+
+ * uuid
+
+ * vector
 
 Since all of these instances are provided as orphans, I recommend that
 you do not use this library within another library module, so that you
@@ -50,3 +62,7 @@ import Test.QuickCheck.Instances.UnorderedContainers ()
 import Test.QuickCheck.Instances.UUID ()
 import Test.QuickCheck.Instances.Vector ()
 import Test.QuickCheck.Instances.Void ()
+
+#ifdef MIN_VERSION_text_short
+import Test.QuickCheck.Instances.Text.Short ()
+#endif
