@@ -1,3 +1,7 @@
+0.3.27
+
+* Add instances for `text-short`'s `ShortText` type
+
 0.3.26
 
 * Fix bug in `CoArbitrary (Hashed a)` instance
