@@ -79,7 +79,7 @@ library
   other-modules:    Test.QuickCheck.Instances.CustomPrelude
   hs-source-dirs:   src
   build-depends:
-      base        >=4.5    && <4.16
+      base        >=4.5    && <4.17
     , QuickCheck  >=2.14.1 && <2.14.3
     , splitmix    >=0.0.2  && <0.2
 
