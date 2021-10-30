@@ -66,11 +66,11 @@ library
     Test.QuickCheck.Instances.OldTime
     Test.QuickCheck.Instances.Scientific
     Test.QuickCheck.Instances.Semigroup
+    Test.QuickCheck.Instances.Solo
     Test.QuickCheck.Instances.Strict
     Test.QuickCheck.Instances.Tagged
     Test.QuickCheck.Instances.Text
     Test.QuickCheck.Instances.These
-    Test.QuickCheck.Instances.Solo
     Test.QuickCheck.Instances.Time
     Test.QuickCheck.Instances.Transformer
     Test.QuickCheck.Instances.UnorderedContainers
