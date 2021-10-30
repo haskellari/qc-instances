@@ -110,7 +110,7 @@ instance CoArbitrary a => CoArbitrary (Semi.WrappedMonoid a) where
 instance Function a => Function (Semi.WrappedMonoid a) where
     function = functionMap Semi.unwrapMonoid Semi.WrapMonoid
 
-
+#if !(MIN_VERSION_base(4,16,0))
 instance Arbitrary1 Semi.Option where
     liftArbitrary arb = Semi.Option <$> liftArbitrary arb
     liftShrink shr = map Semi.Option . liftShrink shr . Semi.getOption
@@ -124,3 +124,4 @@ instance CoArbitrary a => CoArbitrary (Semi.Option a) where
 
 instance Function a => Function (Semi.Option a) where
     function = functionMap Semi.getOption Semi.Option
+#endif

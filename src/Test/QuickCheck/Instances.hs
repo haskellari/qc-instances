@@ -14,6 +14,8 @@ Instances are provided for the types in the packages:
 
  * data-fix
 
+ * OneTuple
+
  * old-time
 
  * strict
@@ -52,6 +54,7 @@ import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.OldTime ()
 import Test.QuickCheck.Instances.Scientific ()
 import Test.QuickCheck.Instances.Semigroup ()
+import Test.QuickCheck.Instances.Solo ()
 import Test.QuickCheck.Instances.Strict ()
 import Test.QuickCheck.Instances.Tagged ()
 import Test.QuickCheck.Instances.Text ()
