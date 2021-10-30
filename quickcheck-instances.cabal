@@ -1,5 +1,5 @@
 name:               quickcheck-instances
-version:            0.3.27
+version:            0.3.26
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
@@ -41,6 +41,7 @@ tested-with:
    || ==8.8.4
    || ==8.10.4
    || ==9.0.1
+   || ==9.2.1
 
 source-repository head
   type:     git
@@ -69,6 +70,7 @@ library
     Test.QuickCheck.Instances.Tagged
     Test.QuickCheck.Instances.Text
     Test.QuickCheck.Instances.These
+    Test.QuickCheck.Instances.Solo
     Test.QuickCheck.Instances.Time
     Test.QuickCheck.Instances.Transformer
     Test.QuickCheck.Instances.UnorderedContainers
@@ -79,7 +81,7 @@ library
   other-modules:    Test.QuickCheck.Instances.CustomPrelude
   hs-source-dirs:   src
   build-depends:
-      base        >=4.5    && <4.16
+      base        >=4.5    && <4.17
     , QuickCheck  >=2.14.1 && <2.14.3
     , splitmix    >=0.0.2  && <0.2
 
@@ -92,6 +94,7 @@ library
     , hashable              >=1.2.7.0 && <1.4
     , integer-logarithms    >=1.0.3   && <1.1
     , old-time              >=1.1.0.0 && <1.2
+    , OneTuple              >=0.3     && <0.4
     , scientific            >=0.3.6.2 && <0.4
     , strict                >=0.4     && <0.5
     , tagged                >=0.8.6   && <0.9
@@ -117,7 +120,7 @@ library
 
   if flag(bytestring-builder)
     build-depends:
-        bytestring          >=0      && <0.10.4.0
+        bytestring          <0.10.4.0
       , bytestring-builder  >=0.10.4 && <0.11
 
   else
@@ -125,7 +128,7 @@ library
 
   if impl(ghc >=7.8)
     exposed-modules: Test.QuickCheck.Instances.Text.Short
-    build-depends: text-short >=0.1.3 && <0.2
+    build-depends:   text-short >=0.1.3 && <0.2
 
   ghc-options:      -Wall
 
