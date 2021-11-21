@@ -1,3 +1,7 @@
+0.3.27
+
+* Add instances for `Backwards`, `Reverse` and `Lift` from `transformers`
+
 0.3.26.1
 
 * Support `hashable-1.4`
