@@ -43,13 +43,13 @@ For information on writing a test-suite with Cabal see
 -}
 module Test.QuickCheck.Instances () where
 
+import Test.QuickCheck.Instances.Aeson ()
 import Test.QuickCheck.Instances.Array ()
 import Test.QuickCheck.Instances.ByteString ()
 import Test.QuickCheck.Instances.CaseInsensitive ()
 import Test.QuickCheck.Instances.Containers ()
 import Test.QuickCheck.Instances.DataFix ()
 import Test.QuickCheck.Instances.Hashable ()
-import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.Natural ()
 import Test.QuickCheck.Instances.OldTime ()
 import Test.QuickCheck.Instances.Scientific ()
