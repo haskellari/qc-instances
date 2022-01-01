@@ -27,3 +27,15 @@ constraint-set lower-bounds-7.4.2
     unordered-containers   ==0.2.2.0,
     uuid-types             ==1.0.3,
     vector                 ==0.9
+
+constraint-set text-1.2
+  ghc: <9.4
+  constraints: text ^>=1.2.3.0
+  tests: True
+  run-tests: True
+
+constraint-set text-2.0
+  ghc: >= 8.0
+  constraints: text ^>=2.0
+  tests: True
+  run-tests: True
