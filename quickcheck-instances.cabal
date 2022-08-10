@@ -1,6 +1,6 @@
 name:               quickcheck-instances
 version:            0.3.27
-x-revision:         2
+x-revision:         3
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
@@ -41,8 +41,9 @@ tested-with:
    || ==8.6.5
    || ==8.8.4
    || ==8.10.4
-   || ==9.0.1
-   || ==9.2.1
+   || ==9.0.2
+   || ==9.2.4
+   || ==9.4.1
 
 source-repository head
   type:     git
@@ -82,7 +83,7 @@ library
   other-modules:    Test.QuickCheck.Instances.CustomPrelude
   hs-source-dirs:   src
   build-depends:
-      base        >=4.5    && <4.17
+      base        >=4.5    && <4.18
     , QuickCheck  >=2.14.1 && <2.14.3
     , splitmix    >=0.0.2  && <0.2
 
