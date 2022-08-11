@@ -1,3 +1,8 @@
+0.3.28
+
+* Add instances for `Data.Array.Byte.ByteArray` (`base-4.17`)
+* Add instances for `Data.Primitive.ByteArray` (`primitive`)
+
 0.3.27
 
 * Add instances for `Backwards`, `Reverse` and `Lift` from `transformers`

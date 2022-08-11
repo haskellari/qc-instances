@@ -21,12 +21,12 @@ constraint-set lower-bounds-7.4.2
     tagged                 ==0.8.6,
     text                   ==1.2.3.0,
     these                  ==1.1.1.1,
-    time                   ==1.4,
+    time                   ==1.2.0.1,
     transformers           ==0.3.0.0,
     transformers-compat    ==0.6.5,
     unordered-containers   ==0.2.2.0,
     uuid-types             ==1.0.3,
-    vector                 ==0.9
+    vector                 ==0.12.3.1
 
 constraint-set text-1.2
   ghc: <9.4
