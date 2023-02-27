@@ -1,3 +1,8 @@
+0.3.29
+
+* Support `primitive-0.8`
+* Use `data-array-byte` shim package for instances for `Data.Array.Byte.ByteArray`
+
 0.3.28
 
 * Add instances for `Data.Array.Byte.ByteArray` (`base-4.17`)

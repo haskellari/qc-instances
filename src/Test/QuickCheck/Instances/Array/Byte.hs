@@ -3,7 +3,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Array.Byte () where
 
-#if MIN_VERSION_base(4,17,0)
+#if !MIN_VERSION_primitive(0,8,0) && MIN_VERSION_base(4,9,0)
 
 import Prelude ()
 import Test.QuickCheck.Instances.CustomPrelude
