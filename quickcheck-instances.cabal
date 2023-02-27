@@ -1,5 +1,5 @@
 name:               quickcheck-instances
-version:            0.3.28
+version:            0.3.29
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
@@ -39,10 +39,10 @@ tested-with:
    || ==8.4.4
    || ==8.6.5
    || ==8.8.4
-   || ==8.10.4
+   || ==8.10.7
    || ==9.0.2
-   || ==9.2.4
-   || ==9.4.1
+   || ==9.2.7
+   || ==9.4.4
 
 source-repository head
   type:     git
@@ -98,7 +98,7 @@ library
     , integer-logarithms    >=1.0.3    && <1.1
     , old-time              >=1.1.0.0  && <1.2
     , OneTuple              >=0.3      && <0.4
-    , primitive             >=0.6.4.0  && <0.8
+    , primitive             >=0.6.4.0  && <0.9
     , scientific            >=0.3.6.2  && <0.4
     , strict                >=0.4      && <0.5
     , tagged                >=0.8.6    && <0.9
@@ -113,6 +113,9 @@ library
 
   -- version is irrelevant.
   build-depends:    time
+
+  if impl(ghc >=8.0 && <9.4)
+    build-depends: data-array-byte >=0.1.0.1 && <0.2
 
   if !impl(ghc >=8.0)
     build-depends: semigroups >=0.18.5 && <0.21
@@ -149,6 +152,9 @@ test-suite self-test
     , quickcheck-instances
     , tagged
     , uuid-types
+
+  if impl(ghc >=8.0 && <9.4)
+    build-depends: data-array-byte
 
 benchmark bytestring-gen
   default-language: Haskell2010
