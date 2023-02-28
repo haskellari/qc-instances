@@ -1,5 +1,5 @@
 name:               quickcheck-instances
-version:            0.3.29
+version:            0.3.29.1
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
@@ -12,9 +12,6 @@ description:
   within another library module, so that you don't
   impose these instances on down-stream consumers of
   your code.
-  .
-  For information on writing a test-suite with Cabal
-  see <https://www.haskell.org/cabal/users-guide/developing-packages.html#test-suites>
 
 license:            BSD3
 license-file:       LICENSE
@@ -43,6 +40,7 @@ tested-with:
    || ==9.0.2
    || ==9.2.7
    || ==9.4.4
+   || ==9.6.1
 
 source-repository head
   type:     git
@@ -97,7 +95,7 @@ library
     , hashable              >=1.2.7.0  && <1.5
     , integer-logarithms    >=1.0.3    && <1.1
     , old-time              >=1.1.0.0  && <1.2
-    , OneTuple              >=0.3      && <0.4
+    , OneTuple              >=0.3      && <0.5
     , primitive             >=0.6.4.0  && <0.9
     , scientific            >=0.3.6.2  && <0.4
     , strict                >=0.4      && <0.5
