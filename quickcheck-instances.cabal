@@ -1,5 +1,5 @@
 name:               quickcheck-instances
-version:            0.3.30
+version:            0.3.29.1
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
@@ -43,6 +43,7 @@ tested-with:
    || ==9.0.2
    || ==9.2.7
    || ==9.4.4
+   || ==9.6.1
 
 source-repository head
   type:     git
