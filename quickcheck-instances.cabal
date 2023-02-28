@@ -12,9 +12,6 @@ description:
   within another library module, so that you don't
   impose these instances on down-stream consumers of
   your code.
-  .
-  For information on writing a test-suite with Cabal
-  see <https://www.haskell.org/cabal/users-guide/developing-packages.html#test-suites>
 
 license:            BSD3
 license-file:       LICENSE
