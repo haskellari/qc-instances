@@ -8,7 +8,7 @@ import Test.QuickCheck.Instances.CustomPrelude
 
 import Data.Word (Word32)
 
-import Test.QuickCheck
+import Test.QuickCheck as QuickCheck
 
 import qualified Data.UUID.Types as UUID
 
@@ -21,7 +21,7 @@ uuidFromWords (a,b,c,d) = UUID.fromWords a b c d
 
 -- | Uniform distribution.
 instance Arbitrary UUID.UUID where
-    arbitrary = uuidFromWords <$> arbitrary
+    arbitrary = uuidFromWords <$> QuickCheck.resize 10000 arbitrary
     shrink = map uuidFromWords . shrink . UUID.toWords
 
 instance CoArbitrary UUID.UUID where
