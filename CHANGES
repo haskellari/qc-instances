@@ -1,3 +1,27 @@
+0.3.30
+
+* Improve Arbitrary UUID instance
+
+  Previously "small" UUIDs were generated, e.g.
+
+  ```
+  00000001-0000-0001-0000-000000000001
+  00000002-0000-0000-0000-000200000002
+  00000004-0000-0004-0000-000400000001
+  00000005-0000-0000-0000-000500000007
+  00000001-0000-000d-0000-00050000000e
+  ```
+
+  but now they are uniformly random
+
+  ```
+  c4683284-bfe3-224b-29a6-1e7f11ceef65
+  7bf6564d-5dcf-3e37-b13d-867085f54dae
+  5b006243-0a70-9321-6594-20dde3d72112
+  2d8ed56e-ed20-7258-7c1f-b46fa9b87946
+  f1503184-9d3c-aacd-e9a7-36c655b70f41
+  ```
+
 0.3.29.1
 
 * Support `OneTuple-0.4`
