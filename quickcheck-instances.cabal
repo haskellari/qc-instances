@@ -107,7 +107,7 @@ library
     , transformers          >=0.3.0.0  && <0.7
     , transformers-compat   >=0.6.5    && <0.8
     , unordered-containers  >=0.2.2.0  && <0.3
-    , uuid-types            >=1.0.3    && <1.1
+    , uuid-types            >=1.0.4    && <1.1
     , vector                >=0.12.3.1 && <0.14
 
   -- version is irrelevant.
