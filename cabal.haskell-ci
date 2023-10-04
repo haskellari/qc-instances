@@ -1,4 +1,5 @@
 branches: master
+head-hackage: False
 
 -- constraint-set QuickCheck-2.13
 --   constraints: QuickCheck==2.13.*
@@ -29,13 +30,13 @@ constraint-set lower-bounds-7.4.2
     vector                 ==0.12.3.1
 
 constraint-set text-1.2
-  ghc: <9.4
+  ghc: <9.3
   constraints: text ^>=1.2.3.0
   tests: True
   run-tests: True
 
 constraint-set text-2.0
-  ghc: >= 8.0
+  ghc: >= 8.0 && <9.7
   constraints: text ^>=2.0
   tests: True
   run-tests: True
