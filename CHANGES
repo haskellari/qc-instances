@@ -1,3 +1,7 @@
+0.3.31
+
+* Support GHC-8.6.5...GHC-9.10.1
+
 0.3.30
 
 * Improve Arbitrary UUID instance
