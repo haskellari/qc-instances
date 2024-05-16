@@ -1,5 +1,3 @@
-{-# LANGUAGE CPP              #-}
-{-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Time () where
 
@@ -39,11 +37,7 @@ instance CoArbitrary Time.UniversalTime where
 
 instance Arbitrary Time.DiffTime where
     arbitrary = arbitrarySizedFractional
-#if MIN_VERSION_time(1,3,0)
     shrink    = shrinkRealFrac
-#else
-    shrink    = (fromRational <$>) . shrink . toRational
-#endif
 
 instance CoArbitrary Time.DiffTime where
     coarbitrary = coarbitraryReal

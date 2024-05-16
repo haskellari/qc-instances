@@ -1,6 +1,3 @@
-{-# LANGUAGE CPP              #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeOperators    #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Vector () where
 

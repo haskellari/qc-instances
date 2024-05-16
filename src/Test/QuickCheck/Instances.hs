@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP              #-}
 {-|
 Instances are provided for the types in the packages:
 
@@ -59,6 +58,7 @@ import Test.QuickCheck.Instances.Solo ()
 import Test.QuickCheck.Instances.Strict ()
 import Test.QuickCheck.Instances.Tagged ()
 import Test.QuickCheck.Instances.Text ()
+import Test.QuickCheck.Instances.Text.Short ()
 import Test.QuickCheck.Instances.These ()
 import Test.QuickCheck.Instances.Time ()
 import Test.QuickCheck.Instances.Transformer ()
@@ -66,7 +66,3 @@ import Test.QuickCheck.Instances.UnorderedContainers ()
 import Test.QuickCheck.Instances.UUID ()
 import Test.QuickCheck.Instances.Vector ()
 import Test.QuickCheck.Instances.Void ()
-
-#ifdef MIN_VERSION_text_short
-import Test.QuickCheck.Instances.Text.Short ()
-#endif

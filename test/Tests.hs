@@ -1,18 +1,15 @@
-{-# LANGUAGE CPP #-}
 module Main (main) where
 
-import Data.Proxy (Proxy (..))
+import Data.Proxy                (Proxy (..))
 import Test.QuickCheck
 import Test.QuickCheck.Instances ()
 
-import qualified Data.Tree as Tree
-import qualified Data.Primitive as Prim
-
-import           Data.UUID.Types (UUID)
-
-#if MIN_VERSION_base(4,9,0)
 import qualified Data.Array.Byte as AB
-#endif
+import qualified Data.Primitive  as Prim
+import qualified Data.Tree       as Tree
+
+import Data.UUID.Types (UUID)
+
 
 -- | Example law: == (and thus ===) should be reflexive.
 eqReflexive
@@ -28,6 +25,4 @@ main = do
     quickCheck $ eqReflexive (Proxy :: Proxy (Tree.Tree Int))
     quickCheck $ eqReflexive (Proxy :: Proxy UUID)
     quickCheck $ eqReflexive (Proxy :: Proxy Prim.ByteArray)
-#if MIN_VERSION_base(4,9,0)
     quickCheck $ eqReflexive (Proxy :: Proxy AB.ByteArray)
-#endif

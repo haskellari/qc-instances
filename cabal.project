@@ -1,4 +1,1 @@
 packages: .
-
--- allow-newer: bytestring
--- constraints: bytestring ^>=0.11
