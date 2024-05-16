@@ -1,16 +1,10 @@
-{-# LANGUAGE CPP              #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Test.QuickCheck.Instances.Solo () where
 
 import Prelude ()
 import Test.QuickCheck.Instances.CustomPrelude
 
-#if MIN_VERSION_OneTuple(0,4,0)
 import Data.Tuple.Solo (Solo (MkSolo), getSolo)
-#else
-import Data.Tuple.Solo (Solo (Solo), getSolo)
-#define MkSolo Solo
-#endif
 
 import Test.QuickCheck
 

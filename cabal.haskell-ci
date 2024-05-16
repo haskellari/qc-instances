@@ -1,33 +1,28 @@
 branches: master
 head-hackage: False
 
--- constraint-set QuickCheck-2.13
---   constraints: QuickCheck==2.13.*
-
-constraint-set lower-bounds-7.4.2
-  ghc: ==7.4.2
+constraint-set lower-bounds-8.6.5
+  ghc: ==8.6.5
   constraints:
-    QuickCheck             ==2.14.1,
-    array                  ==0.4.0.0,
-    base                   ==4.5.1.0,
-    base-compat            ==0.10.5,
-    bytestring             ==0.9.2.1,
-    case-insensitive       ==1.2.0.4,
-    containers             ==0.4.2.1,
-    hashable               ==1.2.7.0,
-    nats                   ==1.1.2,
+    QuickCheck             ==2.14.2,
+    array                  ==0.5.3.0,
+    base                   ==4.12.0.0,
+    bytestring             ==0.10.8.2,
+    case-insensitive       ==1.2.0.11,
+    containers             ==0.6.0.1,
+    hashable               ==1.4.4.0,
     old-time               ==1.1.0.0,
-    scientific             ==0.3.6.2,
-    semigroups             ==0.18.5,
-    tagged                 ==0.8.6,
+    OneTuple               ==0.4.2,
+    scientific             ==0.3.8.0,
+    primitive              ==0.9.0.0,
+    strict                 ==0.5,
+    tagged                 ==0.8.8,
     text                   ==1.2.3.0,
-    these                  ==1.1.1.1,
-    time                   ==1.2.0.1,
-    transformers           ==0.3.0.0,
-    transformers-compat    ==0.6.5,
-    unordered-containers   ==0.2.2.0,
-    uuid-types             ==1.0.4,
-    vector                 ==0.12.3.1
+    these                  ==1.2.1,
+    transformers           ==0.5.6.2,
+    unordered-containers   ==0.2.20,
+    uuid-types             ==1.0.6,
+    vector                 ==0.13.1.0
 
 constraint-set text-1.2
   ghc: <9.3
