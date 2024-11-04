@@ -7,10 +7,11 @@ import Test.QuickCheck.Instances.CustomPrelude
 import Test.QuickCheck
 import Test.QuickCheck.Function ((:->))
 
-import qualified Data.Vector          as Vector
-import qualified Data.Vector.Generic  as GVector
-import qualified Data.Vector.Storable as SVector
-import qualified Data.Vector.Unboxed  as UVector
+import qualified Data.Vector           as Vector
+import qualified Data.Vector.Generic   as GVector
+import qualified Data.Vector.Primitive as PVector
+import qualified Data.Vector.Storable  as SVector
+import qualified Data.Vector.Unboxed   as UVector
 
 -------------------------------------------------------------------------------
 -- vector
@@ -49,6 +50,19 @@ instance (UVector.Unbox a, CoArbitrary a) => CoArbitrary (UVector.Vector a) wher
     coarbitrary = coarbitraryVector
 
 instance (UVector.Unbox a, Function a) => Function (UVector.Vector a) where
+    function = functionVector
+
+-- | @since 0.3.32
+instance (PVector.Prim a, Arbitrary a) => Arbitrary (PVector.Vector a) where
+    arbitrary = arbitraryVector
+    shrink = shrinkVector
+
+-- | @since 0.3.32
+instance (PVector.Prim a, CoArbitrary a) => CoArbitrary (PVector.Vector a) where
+    coarbitrary = coarbitraryVector
+
+-- | @since 0.3.32
+instance (PVector.Prim a, Function a) => Function (PVector.Vector a) where
     function = functionVector
 
 arbitraryVector :: (GVector.Vector v a, Arbitrary a) => Gen (v a)

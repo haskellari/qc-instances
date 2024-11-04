@@ -1,7 +1,6 @@
 cabal-version:      2.2
 name:               quickcheck-instances
-version:            0.3.31
-x-revision:         2
+version:            0.3.32
 synopsis:           Common quickcheck instances
 description:
   QuickCheck instances.
