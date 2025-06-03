@@ -1,3 +1,7 @@
+0.3.33
+
+* Add instances for strict vectors
+
 0.3.32
 
 * Add instances for primitive vectors
