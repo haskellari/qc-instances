@@ -14,10 +14,12 @@ import qualified Data.Primitive as P
 -- ByteArray
 -------------------------------------------------------------------------------
 
+{-
 -- | @since 0.3.28
 instance Arbitrary P.ByteArray where
     arbitrary = byteArrayFromList <$> arbitrary
     shrink ba = byteArrayFromList <$> shrink (byteArrayToList ba)
+-}
 
 -- | @since 0.3.28
 instance CoArbitrary P.ByteArray where

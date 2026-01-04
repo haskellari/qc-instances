@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Data.Proxy                (Proxy (..))
+import Numeric.Natural           (Natural)
 import Test.QuickCheck
 import Test.QuickCheck.Instances ()
 
@@ -21,6 +22,7 @@ eqReflexive _ x = x === x
 
 main :: IO ()
 main = do
+    quickCheck $ eqReflexive (Proxy :: Proxy Natural)
     quickCheck $ eqReflexive (Proxy :: Proxy Int)
     quickCheck $ eqReflexive (Proxy :: Proxy (Tree.Tree Int))
     quickCheck $ eqReflexive (Proxy :: Proxy UUID)

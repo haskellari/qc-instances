@@ -12,9 +12,11 @@ instance Arbitrary1 Solo where
   liftArbitrary = fmap MkSolo
   liftShrink shr = map MkSolo . shr . getSolo
 
+{-
 instance Arbitrary a => Arbitrary (Solo a) where
   arbitrary = arbitrary1
   shrink = shrink1
+-}
 
 instance CoArbitrary a => CoArbitrary (Solo a) where
   coarbitrary = coarbitrary . getSolo

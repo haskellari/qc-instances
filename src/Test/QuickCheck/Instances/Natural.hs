@@ -14,9 +14,11 @@ import Test.QuickCheck.Function (Function (..), functionIntegral)
 -- nats
 -------------------------------------------------------------------------------
 
+{-
 instance Arbitrary Natural where
   arbitrary = arbitrarySizedNatural
   shrink    = shrinkIntegral
+-}
 
 instance CoArbitrary Natural where
   coarbitrary = coarbitraryIntegral
