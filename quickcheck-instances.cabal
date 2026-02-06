@@ -100,7 +100,7 @@ library
     , time-compat           >=1.9.4     && <1.10
     , transformers          >=0.5.6.2   && <0.7
     , unordered-containers  >=0.2.20    && <0.3
-    , uuid-types            >=1.0.6     && <1.1
+    , uuid-types            >=1.0.5     && <1.1
     , vector                >=0.13.2.0  && <0.14
 
   if impl(ghc <9.4)
