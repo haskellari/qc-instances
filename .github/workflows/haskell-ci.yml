@@ -203,7 +203,6 @@ jobs:
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "package quickcheck-instances" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "    ghc-options: -Werror=incomplete-patterns -Werror=incomplete-uni-patterns" >> cabal.project ; fi
           cat >> cabal.project <<EOF
-          allow-newer: these:base
           EOF
           $HCPKG list --simple-output --names-only | perl -ne 'for (split /\s+/) { print "constraints: any.$_ installed\n" unless /^(quickcheck-instances)$/; }' >> cabal.project.local
           cat cabal.project
